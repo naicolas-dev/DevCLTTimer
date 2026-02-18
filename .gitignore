@@ -1,0 +1,66 @@
+# ====== .NET / Visual Studio / WPF ======
+# Build outputs
+**/bin/
+**/obj/
+**/TestResults/
+**/artifacts/
+**/publish/
+**/*.user
+**/*.suo
+**/*.userosscache
+**/*.sln.docstates
+
+# Visual Studio
+.vs/
+*.vsix
+_ReSharper*/
+.idea/
+
+# Rider / JetBrains
+**/.idea/
+
+# VS Code
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# OS junk
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ====== Logs & local temp ======
+*.log
+*_log.txt
+build_err.txt
+build_errors.txt
+errors.log
+errors2.txt
+
+# ====== NuGet ======
+# packages folder (usually not needed on SDK-style, but keep safe)
+packages/
+# NuGet cache should NOT be in repo (usually not inside repo anyway)
+*.nupkg
+
+# ====== SQLite / local app data ======
+# If you keep local db in repo during dev, ignore it.
+*.db
+*.db-shm
+*.db-wal
+
+# ====== Generated / user-specific ======
+*.cache
+*.tmp
+*.bak
+
+# ====== Publish profiles (optional) ======
+# If you have secrets in publish profiles, ignore.
+Properties/PublishProfiles/*.pubxml.user
+
+# ====== Coverage ======
+coverage*/
+*.coverage
+*.coveragexml

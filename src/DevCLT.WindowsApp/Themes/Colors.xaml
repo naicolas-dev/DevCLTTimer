@@ -1,0 +1,65 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- ══ Light Theme: Argila e Sálvia ══ -->
+
+    <!-- Backgrounds -->
+    <Color x:Key="BackgroundColor">#F2EFE9</Color>
+    <Color x:Key="SurfaceColor">#EBE7DF</Color>
+    <Color x:Key="BreakBackgroundTintColor">#EAEAEF</Color>
+
+    <!-- Text -->
+    <Color x:Key="TextPrimaryColor">#2C2B28</Color>
+    <Color x:Key="TextSecondaryColor">#737067</Color>
+
+    <!-- Border -->
+    <Color x:Key="BorderColor">#D6D2C9</Color>
+
+    <!-- Primary (Sálvia) -->
+    <Color x:Key="PrimaryColor">#3A6B58</Color>
+    <Color x:Key="PrimaryHoverColor">#2F5747</Color>
+
+    <!-- Semantic -->
+    <Color x:Key="SuccessColor">#6B8E7B</Color>
+    <Color x:Key="WarningColor">#D98A44</Color>
+    <Color x:Key="DangerColor">#C27365</Color>
+    <Color x:Key="InfoColor">#D1D4D6</Color>
+
+    <!-- Disabled -->
+    <Color x:Key="DisabledBackgroundColor">#E0DDD6</Color>
+    <Color x:Key="DisabledTextColor">#9E9B94</Color>
+
+    <!-- Focus -->
+    <Color x:Key="FocusRingColor">#9CBBAF</Color>
+
+    <!-- Row Hover -->
+    <Color x:Key="RowHoverColor">#F2EFE9</Color>
+
+    <!-- ══ SolidColorBrushes ══ -->
+    <SolidColorBrush x:Key="BackgroundBrush" Color="{StaticResource BackgroundColor}" />
+    <SolidColorBrush x:Key="SurfaceBrush" Color="{StaticResource SurfaceColor}" />
+    <SolidColorBrush x:Key="BreakBackgroundTintBrush" Color="{StaticResource BreakBackgroundTintColor}" />
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="{StaticResource TextPrimaryColor}" />
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="{StaticResource TextSecondaryColor}" />
+    <SolidColorBrush x:Key="BorderBrush" Color="{StaticResource BorderColor}" />
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource PrimaryColor}" />
+    <SolidColorBrush x:Key="PrimaryHoverBrush" Color="{StaticResource PrimaryHoverColor}" />
+    <SolidColorBrush x:Key="SuccessBrush" Color="{StaticResource SuccessColor}" />
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource WarningColor}" />
+    <SolidColorBrush x:Key="DangerBrush" Color="{StaticResource DangerColor}" />
+    <SolidColorBrush x:Key="InfoBrush" Color="{StaticResource InfoColor}" />
+    <SolidColorBrush x:Key="DisabledBackgroundBrush" Color="{StaticResource DisabledBackgroundColor}" />
+    <SolidColorBrush x:Key="DisabledTextBrush" Color="{StaticResource DisabledTextColor}" />
+    <SolidColorBrush x:Key="FocusRingBrush" Color="{StaticResource FocusRingColor}" />
+    <SolidColorBrush x:Key="RowHoverBrush" Color="{StaticResource RowHoverColor}" />
+
+    <!-- Surface Hover: Primary @ 6% -->
+    <SolidColorBrush x:Key="SurfaceHoverBrush" Color="{StaticResource PrimaryColor}" Opacity="0.06" />
+    <!-- Surface Selected: Primary @ 12% -->
+    <SolidColorBrush x:Key="SurfaceSelectedBrush" Color="{StaticResource PrimaryColor}" Opacity="0.12" />
+
+    <!-- Badge backgrounds -->
+    <SolidColorBrush x:Key="BadgeWorkingBrush" Color="{StaticResource PrimaryColor}" Opacity="0.12" />
+    <SolidColorBrush x:Key="BadgeOvertimeBrush" Color="{StaticResource WarningColor}" Opacity="0.12" />
+
+</ResourceDictionary>

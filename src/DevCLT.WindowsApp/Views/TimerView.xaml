@@ -1,0 +1,135 @@
+<UserControl x:Class="DevCLT.WindowsApp.Views.TimerView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:DevCLT.WindowsApp.Controls"
+             xmlns:conv="clr-namespace:DevCLT.WindowsApp.Converters">
+
+    <UserControl.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolVis" />
+        <conv:StateToVisibilityConverter x:Key="StateVis" />
+    </UserControl.Resources>
+
+    <Grid>
+        <!-- Main Content -->
+        <Grid Margin="{StaticResource WindowPadding}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Badge -->
+            <Border Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,16"
+                    Style="{StaticResource BadgeWorking}" x:Name="StateBadge">
+                <TextBlock Text="{Binding StateLabel}"
+                           Style="{StaticResource LabelText}"
+                           Foreground="{StaticResource TextPrimaryBrush}" />
+            </Border>
+
+            <!-- Timer Ring + Display -->
+            <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <controls:TimerRing Progress="{Binding Progress}" IsWarning="{Binding IsWarning}" />
+                <TextBlock Text="{Binding DisplayTime}"
+                           Style="{StaticResource TimerDisplayText}"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Grid>
+
+            <!-- Action Buttons -->
+            <StackPanel Grid.Row="2" HorizontalAlignment="Center" Margin="0,16,0,0">
+                <!-- Working state: "Iniciar pausa" + "Encerrar jornada" -->
+                <StackPanel Visibility="{Binding CurrentState, Converter={StaticResource StateVis}, ConverterParameter=Working}">
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Content="Iniciar pausa"
+                            Command="{Binding StartBreakCommand}"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,0,8" />
+                    <Button Style="{StaticResource TertiaryButton}"
+                            Content="Encerrar jornada"
+                            Command="{Binding ShowEndDayConfirmCommand}"
+                            HorizontalAlignment="Center" />
+                </StackPanel>
+
+                <!-- Break state: no actions (waiting for break to end) -->
+
+                <!-- BreakEndedWaitingUser: handled by modal -->
+
+                <!-- Overtime: "Encerrar hora extra" -->
+                <Button Style="{StaticResource DangerButton}"
+                        Content="Encerrar hora extra"
+                        Command="{Binding StopOvertimeCommand}"
+                        Visibility="{Binding CurrentState, Converter={StaticResource StateVis}, ConverterParameter=Overtime}" />
+            </StackPanel>
+        </Grid>
+
+        <!-- ══ Modal: Break Ended ══ -->
+        <Border Visibility="{Binding ShowBreakEndedModal, Converter={StaticResource BoolVis}}"
+                Style="{StaticResource ModalOverlay}">
+            <Border Style="{StaticResource ModalCard}">
+                <StackPanel>
+                    <TextBlock Text="Pausa concluída"
+                               Style="{StaticResource HeaderText}"
+                               Margin="0,0,0,8" />
+                    <TextBlock Text="Clique para retomar o trabalho."
+                               Style="{StaticResource BodyText}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,24" />
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Content="Retomar trabalho"
+                            Command="{Binding ResumeWorkCommand}"
+                            HorizontalAlignment="Stretch" />
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <!-- ══ Modal: Work Completed ══ -->
+        <Border Visibility="{Binding ShowWorkCompletedModal, Converter={StaticResource BoolVis}}"
+                Style="{StaticResource ModalOverlay}">
+            <Border Style="{StaticResource ModalCard}">
+                <StackPanel>
+                    <TextBlock Text="Jornada concluída! 🎉"
+                               Style="{StaticResource HeaderText}"
+                               Margin="0,0,0,8" />
+                    <TextBlock Text="Você completou suas horas de trabalho. O que deseja fazer?"
+                               Style="{StaticResource BodyText}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,24" />
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Content="Concluir"
+                            Command="{Binding EndDayCommand}"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,0,8" />
+                    <Button Style="{StaticResource SecondaryButton}"
+                            Content="Iniciar hora extra"
+                            Command="{Binding StartOvertimeCommand}"
+                            HorizontalAlignment="Stretch" />
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <!-- ══ Modal: End Day Confirm ══ -->
+        <Border Visibility="{Binding ShowEndDayConfirm, Converter={StaticResource BoolVis}}"
+                Style="{StaticResource ModalOverlay}">
+            <Border Style="{StaticResource ModalCard}">
+                <StackPanel>
+                    <TextBlock Text="Encerrar jornada?"
+                               Style="{StaticResource HeaderText}"
+                               Margin="0,0,0,8" />
+                    <TextBlock Text="Sua jornada ainda não terminou. Deseja encerrar agora?"
+                               Style="{StaticResource BodyText}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,24" />
+                    <Button Style="{StaticResource DangerButton}"
+                            Content="Sim, encerrar"
+                            Command="{Binding ConfirmEndDayCommand}"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,0,8" />
+                    <Button Style="{StaticResource SecondaryButton}"
+                            Content="Cancelar"
+                            Command="{Binding CancelEndDayCommand}"
+                            HorizontalAlignment="Stretch" />
+                </StackPanel>
+            </Border>
+        </Border>
+    </Grid>
+</UserControl>

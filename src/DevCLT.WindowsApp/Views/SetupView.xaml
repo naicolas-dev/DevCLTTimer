@@ -1,0 +1,95 @@
+<UserControl x:Class="DevCLT.WindowsApp.Views.SetupView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:DevCLT.WindowsApp.ViewModels">
+
+    <Grid Margin="{StaticResource WindowPadding}">
+        <StackPanel VerticalAlignment="Center" MaxWidth="400" HorizontalAlignment="Center">
+
+            <!-- Header -->
+            <TextBlock Text="Dev CLT Timer"
+                       Style="{StaticResource HeaderText}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,8" />
+            <TextBlock Text="Configure sua jornada de trabalho"
+                       Style="{StaticResource HintText}"
+                       HorizontalAlignment="Center"
+                       Margin="0,0,0,24" />
+
+            <!-- Card -->
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+
+                    <!-- Work Duration -->
+                    <TextBlock Text="HORAS DE TRABALHO" Style="{StaticResource LabelText}" Margin="0,0,0,8" />
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Horas" Style="{StaticResource HintText}" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource UnderlinedInput}"
+                                     Text="{Binding WorkHours, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <TextBlock Text=":" Grid.Column="1"
+                                   VerticalAlignment="Bottom" Margin="8,0,8,10"
+                                   Style="{StaticResource BodyText}" />
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Minutos" Style="{StaticResource HintText}" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource UnderlinedInput}"
+                                     Text="{Binding WorkMinutes, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Break Duration -->
+                    <TextBlock Text="HORAS DE PAUSA" Style="{StaticResource LabelText}" Margin="0,0,0,8" />
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Horas" Style="{StaticResource HintText}" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource UnderlinedInput}"
+                                     Text="{Binding BreakHours, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                        <TextBlock Text=":" Grid.Column="1"
+                                   VerticalAlignment="Bottom" Margin="8,0,8,10"
+                                   Style="{StaticResource BodyText}" />
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Minutos" Style="{StaticResource HintText}" Margin="0,0,0,4"/>
+                            <TextBox Style="{StaticResource UnderlinedInput}"
+                                     Text="{Binding BreakMinutes, UpdateSourceTrigger=PropertyChanged}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Overtime Notify -->
+                    <TextBlock Text="NOTIFICAR HORA EXTRA A CADA" Style="{StaticResource LabelText}" Margin="0,0,0,8" />
+                    <ComboBox Style="{StaticResource UnderlinedComboBox}"
+                              ItemsSource="{Binding NotifyOptions}"
+                              SelectedIndex="{Binding SelectedNotifyIndex}"
+                              Margin="0,0,0,24" />
+
+                    <!-- Separator -->
+                    <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Margin="0,0,0,16" />
+
+                    <!-- Start Button -->
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Content="Iniciar jornada"
+                            Command="{Binding StartCommand}"
+                            HorizontalAlignment="Stretch" />
+
+                    <!-- History Link -->
+                    <Button Style="{StaticResource TertiaryButton}"
+                            Content="Ver histórico"
+                            Command="{Binding DataContext.ShowHistoryCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                            HorizontalAlignment="Center"
+                            Margin="0,12,0,0" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </Grid>
+</UserControl>

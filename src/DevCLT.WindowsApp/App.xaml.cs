@@ -1,0 +1,52 @@
+using System.IO;
+using System.Windows;
+using DevCLT.Core.Engine;
+using DevCLT.Core.Interfaces;
+using DevCLT.Infrastructure.Data;
+using DevCLT.WindowsApp.Services;
+using DevCLT.WindowsApp.ViewModels;
+
+namespace DevCLT.WindowsApp;
+
+public partial class App : Application
+{
+    protected override async void OnStartup(StartupEventArgs e)
+    {
+        base.OnStartup(e);
+
+        try
+        {
+            // Services
+            IAppPaths paths = new WindowsAppPaths();
+            IClock clock = new SystemClock();
+            INotifier notifier = new WindowsNotifier();
+
+            // Ensure data directory exists
+            Directory.CreateDirectory(paths.DataDirectory);
+
+            // Database
+            var dbInit = new DatabaseInitializer(paths);
+            dbInit.EnsureCreated();
+
+            IRepository repository = new SqliteRepository(paths);
+
+            // Core Engine
+            var engine = new TimerEngine(clock);
+
+            // Main ViewModel
+            var mainVM = new MainViewModel(engine, repository, notifier, clock);
+            await mainVM.InitializeAsync();
+
+            // Window — create manually (no StartupUri)
+            var window = new MainWindow();
+            window.Initialize(mainVM);
+            window.Show();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Erro ao iniciar o aplicativo:\n\n{ex}", "Dev CLT Timer — Erro",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            Shutdown(1);
+        }
+    }
+}
