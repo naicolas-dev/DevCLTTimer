@@ -159,6 +159,20 @@ public class TimerEngine
         return true;
     }
 
+    public bool EndBreakEarly()
+    {
+        if (State != SessionState.Break) return false;
+
+        var now = _clock.UtcNow;
+        if (CurrentSegmentStartUtc.HasValue)
+            _accumulatedBreak += now - CurrentSegmentStartUtc.Value;
+
+        CurrentSegmentStartUtc = now;
+        State = SessionState.Working;
+        StateChanged?.Invoke();
+        return true;
+    }
+
     public bool ResumeWork()
     {
         if (State != SessionState.BreakEndedWaitingUser) return false;

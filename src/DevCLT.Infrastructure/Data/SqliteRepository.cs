@@ -168,6 +168,10 @@ public class SqliteRepository : IRepository
         await UpsertSetting(conn, "BreakDurationMinutes", settings.BreakDurationMinutes.ToString());
         await UpsertSetting(conn, "OvertimeNotifyIntervalMinutes", settings.OvertimeNotifyIntervalMinutes.ToString());
         await UpsertSetting(conn, "IsDarkTheme", settings.IsDarkTheme.ToString());
+        await UpsertSetting(conn, "HotkeysEnabled", settings.HotkeysEnabled.ToString());
+        await UpsertSetting(conn, "HotkeyJornada", settings.HotkeyJornada);
+        await UpsertSetting(conn, "HotkeyPausa", settings.HotkeyPausa);
+        await UpsertSetting(conn, "HotkeyOvertime", settings.HotkeyOvertime);
 
         tx.Commit();
     }
@@ -192,6 +196,14 @@ public class SqliteRepository : IRepository
             settings.OvertimeNotifyIntervalMinutes = ov;
         if (dict.TryGetValue("IsDarkTheme", out var d) && bool.TryParse(d, out var dv))
             settings.IsDarkTheme = dv;
+        if (dict.TryGetValue("HotkeysEnabled", out var he) && bool.TryParse(he, out var hev))
+            settings.HotkeysEnabled = hev;
+        if (dict.TryGetValue("HotkeyJornada", out var hj))
+            settings.HotkeyJornada = hj;
+        if (dict.TryGetValue("HotkeyPausa", out var hp))
+            settings.HotkeyPausa = hp;
+        if (dict.TryGetValue("HotkeyOvertime", out var ho))
+            settings.HotkeyOvertime = ho;
 
         return settings;
     }
