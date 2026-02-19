@@ -2,7 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- ══ Font Families ══ -->
-    <FontFamily x:Key="SansFont">Segoe UI, Satoshi</FontFamily>
+    <!-- Satoshi is primary; fall back to Segoe UI -->
+    <!-- The path assumes the font file is named 'Satoshi-Variable.ttf' in Assets/Fonts -->
+    <FontFamily x:Key="SansFont">pack://application:,,,/Assets/Fonts/#Satoshi Variable, pack://application:,,,/Assets/Fonts/#Satoshi, Segoe UI</FontFamily>
     <FontFamily x:Key="MonoFont">JetBrains Mono, Consolas, Courier New</FontFamily>
 
     <!-- ══ Font Sizes ══ -->
