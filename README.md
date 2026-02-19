@@ -59,7 +59,7 @@ src/DevCLT.WindowsApp/bin/Release/net8.0-windows10.0.17763.0/win-x64/publish/Dev
 
 ## V2 (futuro)
 
-- [ ] Dark theme (Floresta Noturna)
+- [x] Dark theme (Floresta Noturna)
 - [ ] Hotkeys
 - [ ] Export CSV
 - [ ] Painel anual
