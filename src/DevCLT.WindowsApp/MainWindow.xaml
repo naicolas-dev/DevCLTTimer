@@ -7,10 +7,18 @@
         Title="Dev CLT Timer"
         Width="460" Height="640"
         MinWidth="360" MinHeight="500"
-        WindowStyle="SingleBorderWindow"
+        WindowStyle="None"
+        ResizeMode="CanResize"
         Background="{DynamicResource BackgroundBrush}"
         Closing="Window_Closing"
         Icon="pack://application:,,,/app.ico">
+
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32"
+                      GlassFrameThickness="0"
+                      CornerRadius="0"
+                      ResizeBorderThickness="4"/>
+    </WindowChrome.WindowChrome>
 
     <Window.Resources>
         <conv:BoolToVisibilityConverter x:Key="BoolVis" />
@@ -26,38 +34,74 @@
     </Window.Resources>
 
     <Grid>
-        <!-- Recovery Card (top, over content) -->
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /> <!-- Title Bar -->
+            <RowDefinition Height="*" />    <!-- Content -->
+        </Grid.RowDefinitions>
 
-            <!-- Recovery Card -->
-            <Border Grid.Row="0"
-                    Visibility="{Binding ShowRecoveryCard, Converter={StaticResource BoolVis}}"
-                    Style="{StaticResource CardBordered}"
-                    Margin="24,24,24,0"
-                    BorderBrush="{DynamicResource WarningBrush}">
-                <StackPanel>
-                    <TextBlock Text="Parece que o app foi fechado enquanto o timer rodava."
-                               Style="{StaticResource BodyText}"
-                               TextWrapping="Wrap"
-                               Margin="0,0,0,16" />
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Style="{StaticResource SecondaryButton}"
-                                Content="Descartar sessão"
-                                Command="{Binding DiscardRecoveryCommand}"
-                                Margin="0,0,8,0" />
-                        <Button Style="{StaticResource PrimaryButton}"
-                                Content="Retomar contagem"
-                                Command="{Binding ResumeRecoveryCommand}" />
+        <!-- ══ Custom Title Bar ══ -->
+        <Grid Grid.Row="0" Height="32" Background="{DynamicResource SurfaceBrush}" MouseLeftButtonDown="TitleBar_MouseDown">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <!-- Icon & Title -->
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0">
+                <Image Source="pack://application:,,,/app.ico" Width="16" Height="16" Margin="0,0,8,0" RenderOptions.BitmapScalingMode="HighQuality" />
+                <TextBlock Text="Dev CLT Timer"
+                           Style="{StaticResource LabelText}"
+                           Foreground="{DynamicResource TextPrimaryBrush}"
+                           VerticalAlignment="Center"
+                           IsHitTestVisible="False" />
+            </StackPanel>
+
+            <!-- Window Controls -->
+            <StackPanel Grid.Column="2" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
+                <!-- Minimize -->
+                <Button Style="{StaticResource TertiaryButton}"
+                        Click="Minimize_Click"
+                        Width="46" Height="32"
+                        Padding="0" Background="Transparent">
+                    <Path Data="M0,8 L10,8" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Button>
+                <!-- Close -->
+                <Button Style="{StaticResource DangerButton}"
+                        Click="Close_Click"
+                        Width="46" Height="32"
+                        Padding="0" Background="Transparent" BorderThickness="0">
+                    <Path Data="M0,0 L10,10 M0,10 L10,0" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- ══ Main Content ══ -->
+        <Grid Grid.Row="1">
+            <!-- Recovery Card Overlay -->
+            <Grid Panel.ZIndex="1" VerticalAlignment="Top" Margin="24,24,24,0" 
+                  Visibility="{Binding ShowRecoveryCard, Converter={StaticResource BoolVis}}">
+                 <Border Style="{StaticResource CardBordered}" BorderBrush="{DynamicResource WarningBrush}">
+                    <StackPanel>
+                        <TextBlock Text="Parece que o app foi fechado enquanto o timer rodava."
+                                   Style="{StaticResource BodyText}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,16" />
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource SecondaryButton}"
+                                    Content="Descartar sessão"
+                                    Command="{Binding DiscardRecoveryCommand}"
+                                    Margin="0,0,8,0" />
+                            <Button Style="{StaticResource PrimaryButton}"
+                                    Content="Retomar contagem"
+                                    Command="{Binding ResumeRecoveryCommand}" />
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
-            </Border>
+                 </Border>
+            </Grid>
 
             <!-- Current View (dynamic content) -->
-            <ContentControl Grid.Row="1" Content="{Binding CurrentView}" />
+            <ContentControl Content="{Binding CurrentView}" />
         </Grid>
     </Grid>
 </Window>
