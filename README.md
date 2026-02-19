@@ -56,13 +56,16 @@ src/DevCLT.WindowsApp/bin/Release/net8.0-windows10.0.17763.0/win-x64/publish/Dev
 - ✅ Design system: Light theme (Argila/Sálvia), tokens, componentes WPF
 - ✅ TimerRing circular (2px) com warning color
 
-## V2 (futuro)
+## V1
 
 - [x] Dark theme (Floresta Noturna)
 - [x] Title Bar Personalizada
 - [x] Satoshi font embarcada
+- [ ] Tray tooltip e Menu de Contexto com tempo restante
 - [ ] Painel anual
 - [ ] Hotkeys
 - [ ] Export CSV
+
+## V2
+
 - [ ] Port para Linux (Avalonia)
-- [ ] Tray tooltip com tempo restante
