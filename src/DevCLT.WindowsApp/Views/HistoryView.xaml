@@ -1,21 +1,46 @@
 <UserControl x:Class="DevCLT.WindowsApp.Views.HistoryView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:conv="clr-namespace:DevCLT.WindowsApp.Converters">
+             xmlns:conv="clr-namespace:DevCLT.WindowsApp.Converters"
+             xmlns:controls="clr-namespace:DevCLT.WindowsApp.Controls"
+             UseLayoutRounding="True"
+             SnapsToDevicePixels="True">
 
     <UserControl.Resources>
         <conv:BoolToVisibilityConverter x:Key="BoolVis" />
+
+        <!-- Remove o chrome padrão do ListBoxItem -->
+        <Style x:Key="HistoryRowItemContainer" TargetType="{x:Type ListBoxItem}">
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Margin" Value="0"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                        <ContentPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
-    <Grid Margin="{StaticResource WindowPadding}">
+    <!-- Central container with constrained width -->
+    <Grid Margin="{StaticResource WindowPadding}" MaxWidth="540" HorizontalAlignment="Center">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>  <!-- 0: Header -->
+            <RowDefinition Height="Auto"/>  <!-- 1: Tabs -->
+            <RowDefinition Height="Auto"/>  <!-- 2: Period Nav -->
+            <RowDefinition Height="Auto"/>  <!-- 3: Summary Cards -->
+            <RowDefinition Height="Auto"/>  <!-- 4: Table Header -->
+            <RowDefinition Height="*"/>     <!-- 5: Day Rows (scroll aqui) -->
+            <RowDefinition Height="Auto"/>  <!-- 6: Legend -->
         </Grid.RowDefinitions>
 
-        <!-- Header -->
+        <!-- ══ Row 0: Header ══ -->
         <Grid Grid.Row="0" Margin="0,0,0,16">
             <Button Style="{StaticResource TertiaryButton}"
                     Content="← Voltar"
@@ -27,39 +52,149 @@
                        VerticalAlignment="Center" />
         </Grid>
 
-        <!-- Tabs (Week/Month) -->
+        <!-- ══ Row 1: Tabs ══ -->
         <TabControl Grid.Row="1" SelectedIndex="{Binding SelectedTab}" Background="Transparent"
-                    BorderThickness="0" Margin="0,0,0,16">
+                    BorderThickness="0" Margin="0,0,0,12">
             <TabItem Header="Semana" Style="{StaticResource HistoryTabItem}" />
             <TabItem Header="Mês" Style="{StaticResource HistoryTabItem}" />
         </TabControl>
 
-        <!-- Period Navigation -->
+        <!-- ══ Row 2: Period Navigation ══ -->
         <Grid Grid.Row="2" Margin="0,0,0,16">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
+
             <Button Grid.Column="0" Style="{StaticResource TertiaryButton}"
-                    Content="‹" FontSize="20"
+                    Content="◀" FontSize="14" Padding="8,6"
                     Command="{Binding PreviousPeriodCommand}" />
-            <TextBlock Grid.Column="1" Text="{Binding PeriodLabel}"
+
+            <TextBlock Grid.Column="1"
+                       Text="{Binding PeriodLabel}"
                        Style="{StaticResource LabelText}"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center" />
+
             <Button Grid.Column="2" Style="{StaticResource TertiaryButton}"
-                    Content="›" FontSize="20"
+                    Content="▶" FontSize="14" Padding="8,6"
                     Command="{Binding NextPeriodCommand}" />
+
+            <Button Grid.Column="4" Style="{StaticResource SecondaryButton}"
+                    Content="{Binding GoToTodayLabel}" FontSize="11" Padding="10,4"
+                    Command="{Binding GoToTodayCommand}"
+                    VerticalAlignment="Center" />
         </Grid>
 
-        <!-- Content: Empty State or Day List -->
-        <Grid Grid.Row="3">
+        <!-- ══ Row 3: Summary Cards ══ -->
+        <Grid Grid.Row="3" Margin="0,0,0,16"
+              Visibility="{Binding IsEmpty, Converter={StaticResource BoolVis}, ConverterParameter=Invert}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-            <!-- Empty State -->
+            <Border Grid.Column="0" Style="{StaticResource Card}" Padding="12,14">
+                <StackPanel HorizontalAlignment="Center">
+                    <Ellipse Width="16" Height="16" Stroke="{DynamicResource PrimaryBrush}" StrokeThickness="1.5"
+                             HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                    <TextBlock Text="{Binding TotalWork}"
+                               FontFamily="{StaticResource SansFont}"
+                               FontSize="22" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               HorizontalAlignment="Center" Margin="0,0,0,2"/>
+                    <TextBlock Text="Trabalho"
+                               Style="{StaticResource HintText}"
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="2" Style="{StaticResource Card}" Padding="12,14">
+                <StackPanel HorizontalAlignment="Center">
+                    <Canvas Width="16" Height="16" HorizontalAlignment="Center" Margin="0,0,0,6">
+                        <Rectangle Canvas.Left="4" Canvas.Top="2" Width="2.5" Height="12" RadiusX="1" RadiusY="1"
+                                   Fill="{DynamicResource TextSecondaryBrush}"/>
+                        <Rectangle Canvas.Left="9.5" Canvas.Top="2" Width="2.5" Height="12" RadiusX="1" RadiusY="1"
+                                   Fill="{DynamicResource TextSecondaryBrush}"/>
+                    </Canvas>
+                    <TextBlock Text="{Binding TotalBreak}"
+                               FontFamily="{StaticResource SansFont}"
+                               FontSize="22" FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               HorizontalAlignment="Center" Margin="0,0,0,2"/>
+                    <TextBlock Text="Pausa"
+                               Style="{StaticResource HintText}"
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <Border Grid.Column="4" Style="{StaticResource Card}" Padding="12,14">
+                <StackPanel HorizontalAlignment="Center">
+                    <Ellipse Width="16" Height="16" Stroke="{DynamicResource WarningBrush}" StrokeThickness="1.5"
+                             HorizontalAlignment="Center" Margin="0,0,0,6"/>
+                    <TextBlock Text="{Binding TotalOvertime}"
+                               FontFamily="{StaticResource SansFont}"
+                               FontSize="22" FontWeight="SemiBold"
+                               HorizontalAlignment="Center" Margin="0,0,0,2">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasTotalOvertime}" Value="True">
+                                        <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                    <TextBlock Text="Hora Extra"
+                               Style="{StaticResource HintText}"
+                               HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- ══ Row 4: Table Header ══ -->
+        <Border Grid.Row="4" Padding="12,8" Margin="0,0,0,2"
+                Background="{DynamicResource SurfaceBrush}" CornerRadius="6,6,0,0"
+                BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1"
+                Visibility="{Binding IsEmpty, Converter={StaticResource BoolVis}, ConverterParameter=Invert}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="110"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Data"
+                           Style="{StaticResource HintText}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                <TextBlock Grid.Column="1" Text="Trabalho"
+                           Style="{StaticResource HintText}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="2" Text="Pausa"
+                           Style="{StaticResource HintText}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+                <TextBlock Grid.Column="3" Text="Hora Extra"
+                           Style="{StaticResource HintText}" FontWeight="SemiBold" HorizontalAlignment="Center"/>
+            </Grid>
+        </Border>
+
+        <!-- ══ Row 5: Content ══ -->
+        <Grid Grid.Row="5" MinHeight="120">
+
+            <!-- Empty State (overlay) -->
             <StackPanel Visibility="{Binding IsEmpty, Converter={StaticResource BoolVis}}"
-                        VerticalAlignment="Center" HorizontalAlignment="Center">
-                <TextBlock Text="📋" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,12" />
+                        VerticalAlignment="Center" HorizontalAlignment="Center"
+                        Margin="0,32">
+                <TextBlock Text="☰"
+                           FontSize="40"
+                           FontFamily="{StaticResource SansFont}"
+                           Foreground="{DynamicResource TextSecondaryBrush}"
+                           HorizontalAlignment="Center" Margin="0,0,0,12" />
                 <TextBlock Text="Nenhum registro ainda."
                            Style="{StaticResource BodyText}"
                            HorizontalAlignment="Center"
@@ -69,98 +204,104 @@
                            HorizontalAlignment="Center" />
             </StackPanel>
 
-            <!-- Day List -->
-            <StackPanel Visibility="{Binding IsEmpty, Converter={StaticResource BoolVis}, ConverterParameter=Invert}">
-                <!-- Totals Card -->
-                <Border Style="{StaticResource Card}" Margin="0,0,0,16">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" HorizontalAlignment="Center">
-                            <TextBlock Text="Trabalho" Style="{StaticResource HintText}" HorizontalAlignment="Center"/>
-                            <TextBlock Text="{Binding TotalWork}"
-                                       Style="{StaticResource BodyText}"
-                                       FontFamily="{StaticResource MonoFont}"
-                                       FontWeight="SemiBold"
-                                       HorizontalAlignment="Center" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" HorizontalAlignment="Center">
-                            <TextBlock Text="Pausa" Style="{StaticResource HintText}" HorizontalAlignment="Center"/>
-                            <TextBlock Text="{Binding TotalBreak}"
-                                       Style="{StaticResource BodyText}"
-                                       FontFamily="{StaticResource MonoFont}"
-                                       FontWeight="SemiBold"
-                                       HorizontalAlignment="Center" />
-                        </StackPanel>
-                        <StackPanel Grid.Column="2" HorizontalAlignment="Center">
-                            <TextBlock Text="Extra" Style="{StaticResource HintText}" HorizontalAlignment="Center"/>
-                            <TextBlock Text="{Binding TotalOvertime}"
-                                       Style="{StaticResource BodyText}"
-                                       FontFamily="{StaticResource MonoFont}"
-                                       FontWeight="SemiBold"
-                                       HorizontalAlignment="Center" />
-                        </StackPanel>
-                    </Grid>
-                </Border>
+            <!-- Day Rows (LISTA que rola) -->
+            <ListBox ItemsSource="{Binding DaySummaries}"
+                     Visibility="{Binding IsEmpty, Converter={StaticResource BoolVis}, ConverterParameter=Invert}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     ItemContainerStyle="{StaticResource HistoryRowItemContainer}"
 
-                <!-- Day rows -->
-                <ItemsControl ItemsSource="{Binding DaySummaries}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border Padding="12,10" Margin="0,0,0,4"
-                                    CornerRadius="4" Background="Transparent">
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource RowHoverBrush}" />
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="100"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="{Binding DateLocal}"
-                                               Style="{StaticResource LabelText}" VerticalAlignment="Center" />
-                                    <TextBlock Grid.Column="1"
-                                               FontFamily="{StaticResource MonoFont}"
-                                               Style="{StaticResource BodyText}"
-                                               HorizontalAlignment="Center">
-                                        <TextBlock.Text>
-                                            <Binding Path="WorkTime" StringFormat="{}{0:hh\:mm}" />
-                                        </TextBlock.Text>
-                                    </TextBlock>
-                                    <TextBlock Grid.Column="2"
-                                               FontFamily="{StaticResource MonoFont}"
-                                               Style="{StaticResource BodyText}"
-                                               HorizontalAlignment="Center">
-                                        <TextBlock.Text>
-                                            <Binding Path="BreakTime" StringFormat="{}{0:hh\:mm}" />
-                                        </TextBlock.Text>
-                                    </TextBlock>
-                                    <TextBlock Grid.Column="3"
-                                               FontFamily="{StaticResource MonoFont}"
-                                               Style="{StaticResource BodyText}"
-                                               Foreground="{DynamicResource WarningBrush}"
-                                               HorizontalAlignment="Center">
-                                        <TextBlock.Text>
-                                            <Binding Path="OvertimeTime" StringFormat="{}{0:hh\:mm}" />
-                                        </TextBlock.Text>
-                                    </TextBlock>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </StackPanel>
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ScrollViewer.CanContentScroll="True"
+                     VirtualizingPanel.IsVirtualizing="True"
+                     VirtualizingPanel.VirtualizationMode="Recycling"
+                     VirtualizingStackPanel.ScrollUnit="Pixel">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <Border Padding="12,10" Margin="0,0,0,1"
+                                CornerRadius="4" Background="Transparent">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="{DynamicResource SurfaceHoverBrush}" />
+                                        </Trigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" Text="{Binding FormattedDate}"
+                                           Style="{StaticResource LabelText}"
+                                           VerticalAlignment="Center" />
+
+                                <TextBlock Grid.Column="1" Text="{Binding FormattedWork}"
+                                           FontFamily="{StaticResource SansFont}"
+                                           FontSize="14"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+
+                                <TextBlock Grid.Column="2" Text="{Binding FormattedBreak}"
+                                           FontFamily="{StaticResource SansFont}"
+                                           FontSize="14"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding TotalBreakSeconds}" Value="0">
+                                                    <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <TextBlock Grid.Column="3" Text="{Binding FormattedOvertime}"
+                                           FontFamily="{StaticResource SansFont}"
+                                           FontSize="14"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding HasOvertime}" Value="True">
+                                                    <Setter Property="Foreground" Value="{DynamicResource WarningBrush}"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
         </Grid>
+
+        <!-- ══ Row 6: Legend ══ -->
+        <TextBlock Grid.Row="6" Margin="0,12,0,0"
+                   Style="{StaticResource HintText}"
+                   HorizontalAlignment="Center"
+                   Opacity="0.7"
+                   Visibility="{Binding IsEmpty, Converter={StaticResource BoolVis}, ConverterParameter=Invert}">
+            <Run Text="Trabalho = foco"/>
+            <Run Text="  ·  "/>
+            <Run Text="Pausa = descanso"/>
+            <Run Text="  ·  "/>
+            <Run Text="Hora Extra = após jornada"/>
+        </TextBlock>
+
     </Grid>
 </UserControl>

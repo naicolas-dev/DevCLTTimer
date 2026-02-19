@@ -23,7 +23,7 @@ public class TimerRing : UserControl
 
     private readonly Ellipse _track;
     private readonly Path _arc;
-    private readonly double _size = 200;
+    private readonly double _size = 280;
     private readonly double _strokeWidth = 2;
 
     public TimerRing()

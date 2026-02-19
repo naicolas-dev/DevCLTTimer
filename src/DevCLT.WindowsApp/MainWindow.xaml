@@ -4,10 +4,10 @@
         xmlns:views="clr-namespace:DevCLT.WindowsApp.Views"
         xmlns:vm="clr-namespace:DevCLT.WindowsApp.ViewModels"
         xmlns:conv="clr-namespace:DevCLT.WindowsApp.Converters"
+        xmlns:controls="clr-namespace:DevCLT.WindowsApp.Controls"
         Title="Dev CLT Timer"
         Width="460" Height="640"
         MinWidth="360" MinHeight="500"
-        WindowStyle="None"
         ResizeMode="CanResize"
         Background="{DynamicResource BackgroundBrush}"
         Closing="Window_Closing"
@@ -15,9 +15,10 @@
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="32"
-                      GlassFrameThickness="0"
+                      GlassFrameThickness="-1"
                       CornerRadius="0"
-                      ResizeBorderThickness="4"/>
+                      ResizeBorderThickness="4"
+                      UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
 
     <Window.Resources>
@@ -33,75 +34,100 @@
         </DataTemplate>
     </Window.Resources>
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" /> <!-- Title Bar -->
-            <RowDefinition Height="*" />    <!-- Content -->
-        </Grid.RowDefinitions>
+    <Border Background="{DynamicResource BackgroundBrush}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" /> <!-- Title Bar -->
+                <RowDefinition Height="*" />    <!-- Content -->
+            </Grid.RowDefinitions>
 
-        <!-- ══ Custom Title Bar ══ -->
-        <Grid Grid.Row="0" Height="32" Background="{DynamicResource SurfaceBrush}" MouseLeftButtonDown="TitleBar_MouseDown">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+            <!-- ══ Custom Title Bar ══ -->
+            <Grid Grid.Row="0" Height="32" Background="{DynamicResource SurfaceBrush}" MouseLeftButtonDown="TitleBar_MouseDown">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-            <!-- Icon & Title -->
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0">
-                <Image Source="pack://application:,,,/app.ico" Width="16" Height="16" Margin="0,0,8,0" RenderOptions.BitmapScalingMode="HighQuality" />
-                <TextBlock Text="Dev CLT Timer"
-                           Style="{StaticResource LabelText}"
-                           Foreground="{DynamicResource TextPrimaryBrush}"
-                           VerticalAlignment="Center"
-                           IsHitTestVisible="False" />
-            </StackPanel>
+                <!-- Icon & Title -->
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="12,0">
+                    <Image Source="pack://application:,,,/app.ico" Width="16" Height="16" Margin="0,0,8,0" RenderOptions.BitmapScalingMode="HighQuality" />
+                    <TextBlock Text="Dev CLT Timer"
+                               Style="{StaticResource LabelText}"
+                               Foreground="{DynamicResource TextPrimaryBrush}"
+                               VerticalAlignment="Center"
+                               IsHitTestVisible="False" />
+                </StackPanel>
 
-            <!-- Window Controls -->
-            <StackPanel Grid.Column="2" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
-                <!-- Minimize -->
-                <Button Style="{StaticResource TertiaryButton}"
-                        Click="Minimize_Click"
-                        Width="46" Height="32"
-                        Padding="0" Background="Transparent">
-                    <Path Data="M0,8 L10,8" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                <!-- Theme Toggle -->
+                <Button Grid.Column="2"
+                        Command="{Binding ToggleThemeCommand}"
+                        ToolTip="Alternar tema (Claro/Escuro)"
+                        Style="{StaticResource TertiaryButton}"
+                        WindowChrome.IsHitTestVisibleInChrome="True"
+                        Width="40" Height="32" Padding="0">
+                    <Grid Width="20" Height="20">
+                        <!-- Sun rays (visible in dark → clicking gives light) -->
+                        <Ellipse Width="10" Height="10"
+                                 Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                 StrokeThickness="1.5"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        <!-- Sun/Moon indicator lines -->
+                        <Path Data="M10,1 L10,4 M10,16 L10,19 M1,10 L4,10 M16,10 L19,10 M3.2,3.2 L5.3,5.3 M14.7,14.7 L16.8,16.8 M16.8,3.2 L14.7,5.3 M5.3,14.7 L3.2,16.8"
+                              Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                              StrokeThickness="1.5"
+                              Stretch="None"
+                              HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
                 </Button>
-                <!-- Close -->
-                <Button Style="{StaticResource DangerButton}"
-                        Click="Close_Click"
-                        Width="46" Height="32"
-                        Padding="0" Background="Transparent" BorderThickness="0">
-                    <Path Data="M0,0 L10,10 M0,10 L10,0" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" />
-                </Button>
-            </StackPanel>
-        </Grid>
 
-        <!-- ══ Main Content ══ -->
-        <Grid Grid.Row="1">
-            <!-- Recovery Card Overlay -->
-            <Grid Panel.ZIndex="1" VerticalAlignment="Top" Margin="24,24,24,0" 
-                  Visibility="{Binding ShowRecoveryCard, Converter={StaticResource BoolVis}}">
-                 <Border Style="{StaticResource CardBordered}" BorderBrush="{DynamicResource WarningBrush}">
-                    <StackPanel>
-                        <TextBlock Text="Parece que o app foi fechado enquanto o timer rodava."
-                                   Style="{StaticResource BodyText}"
-                                   TextWrapping="Wrap"
-                                   Margin="0,0,0,16" />
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                            <Button Style="{StaticResource SecondaryButton}"
-                                    Content="Descartar sessão"
-                                    Command="{Binding DiscardRecoveryCommand}"
-                                    Margin="0,0,8,0" />
-                            <Button Style="{StaticResource PrimaryButton}"
-                                    Content="Retomar contagem"
-                                    Command="{Binding ResumeRecoveryCommand}" />
-                        </StackPanel>
-                    </StackPanel>
-                 </Border>
+                <!-- Window Controls (Minimize + Close) -->
+                <StackPanel Grid.Column="3" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
+                    <!-- Minimize -->
+                    <Button Style="{StaticResource TertiaryButton}"
+                            Click="Minimize_Click"
+                            Width="46" Height="32"
+                            Padding="0" Background="Transparent">
+                        <Path Data="M0,8 L10,8" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </Button>
+                    <!-- Close -->
+                    <Button Style="{StaticResource DangerButton}"
+                            Click="Close_Click"
+                            Width="46" Height="32"
+                            Padding="0" Background="Transparent" BorderThickness="0">
+                        <Path Data="M0,0 L10,10 M0,10 L10,0" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}" StrokeThickness="1" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                    </Button>
+                </StackPanel>
             </Grid>
 
-            <!-- Current View (dynamic content) -->
-            <ContentControl Content="{Binding CurrentView}" />
+            <!-- ══ Main Content ══ -->
+            <Grid Grid.Row="1">
+                <!-- Recovery Card Overlay -->
+                <Grid Panel.ZIndex="1" VerticalAlignment="Top" Margin="24,24,24,0" 
+                      Visibility="{Binding ShowRecoveryCard, Converter={StaticResource BoolVis}}">
+                     <Border Style="{StaticResource CardBordered}" BorderBrush="{DynamicResource WarningBrush}">
+                        <StackPanel>
+                            <TextBlock Text="Parece que o app foi fechado enquanto o timer rodava."
+                                       Style="{StaticResource BodyText}"
+                                       TextWrapping="Wrap"
+                                       Margin="0,0,0,16" />
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Style="{StaticResource SecondaryButton}"
+                                        Content="Descartar sessão"
+                                        Command="{Binding DiscardRecoveryCommand}"
+                                        Margin="0,0,8,0" />
+                                <Button Style="{StaticResource PrimaryButton}"
+                                        Content="Retomar contagem"
+                                        Command="{Binding ResumeRecoveryCommand}" />
+                            </StackPanel>
+                        </StackPanel>
+                     </Border>
+                </Grid>
+
+                <!-- Current View (dynamic content) -->
+                <ContentControl Content="{Binding CurrentView}" />
+            </Grid>
         </Grid>
-    </Grid>
+    </Border>
 </Window>

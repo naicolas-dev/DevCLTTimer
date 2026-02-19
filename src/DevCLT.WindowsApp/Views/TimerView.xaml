@@ -29,10 +29,12 @@
             <!-- Timer Ring + Display -->
             <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
                 <controls:TimerRing Progress="{Binding Progress}" IsWarning="{Binding IsWarning}" />
-                <TextBlock Text="{Binding DisplayTime}"
-                           Style="{StaticResource TimerDisplayText}"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center" />
+                <Viewbox MaxWidth="220" Stretch="Uniform">
+                    <TextBlock Text="{Binding DisplayTime}"
+                               Style="{StaticResource TimerDisplayText}"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center" />
+                </Viewbox>
             </Grid>
 
             <!-- Action Buttons -->

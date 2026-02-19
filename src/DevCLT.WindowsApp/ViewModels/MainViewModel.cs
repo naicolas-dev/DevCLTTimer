@@ -12,6 +12,7 @@ public class MainViewModel : ViewModelBase
     private readonly IRepository _repository;
     private readonly INotifier _notifier;
     private readonly IClock _clock;
+    private readonly IThemeService _themeService;
 
     private ViewModelBase? _currentView;
     private bool _showRecoveryCard;
@@ -27,6 +28,8 @@ public class MainViewModel : ViewModelBase
     public ICommand ResumeRecoveryCommand { get; }
     public ICommand DiscardRecoveryCommand { get; }
     public ICommand ShowHistoryCommand { get; }
+    public ICommand ToggleThemeCommand { get; }
+    public bool IsDarkTheme => _themeService.IsDarkTheme;
 
     // For tray menu
     public SessionState CurrentEngineState => _engine.State;
@@ -37,6 +40,7 @@ public class MainViewModel : ViewModelBase
         _repository = repository;
         _notifier = notifier;
         _clock = clock;
+        _themeService = themeService;
 
         SetupVM = new SetupViewModel(repository, themeService);
         TimerVM = new TimerViewModel(engine, repository, notifier, clock);
@@ -49,6 +53,14 @@ public class MainViewModel : ViewModelBase
         ResumeRecoveryCommand = new RelayCommand(async () => await ResumeRecovery());
         DiscardRecoveryCommand = new RelayCommand(async () => await DiscardRecovery());
         ShowHistoryCommand = new RelayCommand(async () => await GoToHistory());
+        ToggleThemeCommand = new RelayCommand(async () =>
+        {
+            _themeService.ToggleTheme();
+            OnPropertyChanged(nameof(IsDarkTheme));
+            var s = await _repository.LoadSettingsAsync();
+            s.IsDarkTheme = IsDarkTheme;
+            await _repository.SaveSettingsAsync(s);
+        });
 
         CurrentView = SetupVM;
     }

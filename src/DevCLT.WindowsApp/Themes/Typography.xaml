@@ -21,7 +21,7 @@
 
     <!-- ══ Predefined TextBlock Styles ══ -->
     <Style x:Key="TimerDisplayText" TargetType="TextBlock">
-        <Setter Property="FontFamily" Value="{StaticResource MonoFont}" />
+        <Setter Property="FontFamily" Value="{StaticResource SansFont}" />
         <Setter Property="FontSize" Value="{StaticResource TimerDisplaySize}" />
         <Setter Property="FontWeight" Value="{StaticResource WeightMedium}" />
         <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
