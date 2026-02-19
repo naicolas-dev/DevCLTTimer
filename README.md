@@ -45,24 +45,26 @@ Com uma interface moderna e discreta, ele gerencia seus horários de trabalho, p
 
 <details>
 <summary>🌑 Modo Escuro</summary>
-<br>
+
 | | |
 |:---:|:---:|
 | ![Dashboard Dark 1](assets/demo-dark/Darkmode1.png) | ![Dashboard Dark 2](assets/demo-dark/Darkmode2.png) |
 | ![Dashboard Dark 3](assets/demo-dark/Darkmode3.png) | ![Dashboard Dark 4](assets/demo-dark/Darkmode4.png) |
 | ![Dashboard Dark 5](assets/demo-dark/Darkmode5.png) | ![Dashboard Dark 6](assets/demo-dark/Darkmode6.png) |
 | ![Dashboard Dark 7](assets/demo-dark/Darkmode7.png) | ![Dashboard Dark 8](assets/demo-dark/Darkmode8.png) |
+
 </details>
 
 <details>
 <summary>☀️ Modo Claro</summary>
-<br>
+
 | | |
 |:---:|:---:|
 | ![Dashboard Light 1](assets/demo-light/lightmode1.png) | ![Dashboard Light 2](assets/demo-light/lightmode2.png) |
 | ![Dashboard Light 3](assets/demo-light/lightmode3.png) | ![Dashboard Light 4](assets/demo-light/lightmode4.png) |
 | ![Dashboard Light 5](assets/demo-light/lightmode5.png) | ![Dashboard Light 6](assets/demo-light/lightmode6.png) |
 | ![Dashboard Light 7](assets/demo-light/lightmode7.png) | ![Dashboard Light 8](assets/demo-light/lightmode8.png) |
+
 </details>
 
 ---
