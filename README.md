@@ -1,10 +1,10 @@
-# DevCLT Timer v1.0 🚀
+![DevCLT Timer Banner](https://i.imgur.com/Do8xJUV.jpeg)
+
+# DevCLT Timer 🚀
 
 O **DevCLT Timer** é a ferramenta definitiva para desenvolvedores CLT que precisam controlar sua jornada de trabalho com precisão, sem abrir mão da produtividade.
 
 Com uma interface moderna e discreta, ele gerencia seus horários de trabalho, pausas e horas extras, garantindo que você mantenha o foco no código via **Atalhos Globais** e notificações inteligentes.
-
-![DevCLT Timer Screenshot](https://i.imgur.com/Do8xJUV.jpeg)
 
 ---
 
@@ -14,6 +14,10 @@ Com uma interface moderna e discreta, ele gerencia seus horários de trabalho, p
 - **Timer Inteligente**: Contagem regressiva para jornada e pausas, e progressiva para horas extras.
 - **Estados de Trabalho**: Alterne facilmente entre *Trabalhando*, *Em Pausa* e *Hora Extra*.
 - **Notificações**: Receba alertas (Toasts) quando o tempo de pausa acabar ou quando atingir marcos de hora extra.
+  
+  <p align="center">
+    <img src="assets/noti.png" alt="Exemplo de Notificação" width="600"/>
+  </p>
 
 ### ⌨️ Produtividade Máxima
 - **Atalhos Globais (Hotkeys)**: Controle o timer de qualquer lugar do Windows, mesmo com o app minimizado.
@@ -32,6 +36,25 @@ Com uma interface moderna e discreta, ele gerencia seus horários de trabalho, p
 - **Modo Escuro**: Tema *Floresta Noturna* para conforto visual.
 - **Interface Moderna**: Desenvolvido em WPF com estilos customizados e bordas arredondadas (Windows 11 style).
 - **Sem Perda de Dados**: Persistência local segura com SQLite. Se fechar o app, ele recupera o estado exato ao reabrir.
+
+
+## 📸 Galeria
+
+### 🌑 Modo Escuro
+| | |
+|:---:|:---:|
+| ![Dashboard Dark 1](assets/demo-dark/Darkmode1.png) | ![Dashboard Dark 2](assets/demo-dark/Darkmode2.png) |
+| ![Dashboard Dark 3](assets/demo-dark/Darkmode3.png) | ![Dashboard Dark 4](assets/demo-dark/Darkmode4.png) |
+| ![Dashboard Dark 5](assets/demo-dark/Darkmode5.png) | ![Dashboard Dark 6](assets/demo-dark/Darkmode6.png) |
+| ![Dashboard Dark 7](assets/demo-dark/Darkmode7.png) | ![Dashboard Dark 8](assets/demo-dark/Darkmode8.png) |
+
+### ☀️ Modo Claro
+| | |
+|:---:|:---:|
+| ![Dashboard Light 1](assets/demo-light/lightmode1.png) | ![Dashboard Light 2](assets/demo-light/lightmode2.png) |
+| ![Dashboard Light 3](assets/demo-light/lightmode3.png) | ![Dashboard Light 4](assets/demo-light/lightmode4.png) |
+| ![Dashboard Light 5](assets/demo-light/lightmode5.png) | ![Dashboard Light 6](assets/demo-light/lightmode6.png) |
+| ![Dashboard Light 7](assets/demo-light/lightmode7.png) | ![Dashboard Light 8](assets/demo-light/lightmode8.png) |
 
 ---
 
@@ -69,4 +92,11 @@ O executável é *portable* (não requer instalação) e auto-contido.
 
 ---
 
-Desenvolvido para a comunidade Dev. <3
+Desenvolvido por naicolas para a comunidade Dev. <3
+
+<!-- Pretty Boy -->
+<p align="center">
+  <a href="https://www.youtube.com/watch?v=9IVO5Dsz1KI">
+    <img src="assets/prettyboy-joji.gif" alt="DevCLT Easter Egg" width="50"/>
+  </a>
+</p>
