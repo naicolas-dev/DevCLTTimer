@@ -1,6 +1,9 @@
-![DevCLT Timer Banner](https://i.imgur.com/Do8xJUV.jpeg)
+![DevCLT Timer Banner](assets/DevCLTTimer/devclttimer-banner.png)
 
-# DevCLT Timer 🚀
+<div align="center">
+  <img src="assets/DevCLTTimer/devclttimer-icon.png" width="120" />
+  <h1>DevCLT Timer 🚀</h1>
+</div>
 
 O **DevCLT Timer** é a ferramenta definitiva para desenvolvedores CLT que precisam controlar sua jornada de trabalho com precisão, sem abrir mão da produtividade.
 
@@ -40,21 +43,27 @@ Com uma interface moderna e discreta, ele gerencia seus horários de trabalho, p
 
 ## 📸 Galeria
 
-### 🌑 Modo Escuro
+<details>
+<summary>🌑 Modo Escuro</summary>
+<br>
 | | |
 |:---:|:---:|
 | ![Dashboard Dark 1](assets/demo-dark/Darkmode1.png) | ![Dashboard Dark 2](assets/demo-dark/Darkmode2.png) |
 | ![Dashboard Dark 3](assets/demo-dark/Darkmode3.png) | ![Dashboard Dark 4](assets/demo-dark/Darkmode4.png) |
 | ![Dashboard Dark 5](assets/demo-dark/Darkmode5.png) | ![Dashboard Dark 6](assets/demo-dark/Darkmode6.png) |
 | ![Dashboard Dark 7](assets/demo-dark/Darkmode7.png) | ![Dashboard Dark 8](assets/demo-dark/Darkmode8.png) |
+</details>
 
-### ☀️ Modo Claro
+<details>
+<summary>☀️ Modo Claro</summary>
+<br>
 | | |
 |:---:|:---:|
 | ![Dashboard Light 1](assets/demo-light/lightmode1.png) | ![Dashboard Light 2](assets/demo-light/lightmode2.png) |
 | ![Dashboard Light 3](assets/demo-light/lightmode3.png) | ![Dashboard Light 4](assets/demo-light/lightmode4.png) |
 | ![Dashboard Light 5](assets/demo-light/lightmode5.png) | ![Dashboard Light 6](assets/demo-light/lightmode6.png) |
 | ![Dashboard Light 7](assets/demo-light/lightmode7.png) | ![Dashboard Light 8](assets/demo-light/lightmode8.png) |
+</details>
 
 ---
 
@@ -95,8 +104,8 @@ O executável é *portable* (não requer instalação) e auto-contido.
 Desenvolvido por naicolas para a comunidade Dev. <3
 
 <!-- Pretty Boy -->
-<p align="center">
+<p>
   <a href="https://www.youtube.com/watch?v=9IVO5Dsz1KI">
-    <img src="assets/prettyboy-joji.gif" alt="DevCLT Easter Egg" width="50"/>
+    <img src="assets/prettyboy-joji.gif" alt="DevCLT Easter Egg" width="120"/>
   </a>
 </p>
