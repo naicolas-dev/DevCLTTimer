@@ -5,7 +5,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <!-- Tokens -->
-                <ResourceDictionary Source="Themes/Colors.xaml" />
+                <ResourceDictionary Source="Themes/ColorsLight.xaml" />
                 <ResourceDictionary Source="Themes/Typography.xaml" />
                 <ResourceDictionary Source="Themes/Spacing.xaml" />
                 <!-- Styles -->

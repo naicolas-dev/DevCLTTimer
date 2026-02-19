@@ -32,9 +32,12 @@ public partial class App : Application
 
             // Core Engine
             var engine = new TimerEngine(clock);
+            
+            // Theme Service
+            IThemeService themeService = new ThemeService();
 
             // Main ViewModel
-            var mainVM = new MainViewModel(engine, repository, notifier, clock);
+            var mainVM = new MainViewModel(engine, repository, notifier, clock, themeService);
             await mainVM.InitializeAsync();
 
             // Window — create manually (no StartupUri)
