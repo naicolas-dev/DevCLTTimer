@@ -167,6 +167,7 @@ public class SqliteRepository : IRepository
         await UpsertSetting(conn, "WorkDurationMinutes", settings.WorkDurationMinutes.ToString());
         await UpsertSetting(conn, "BreakDurationMinutes", settings.BreakDurationMinutes.ToString());
         await UpsertSetting(conn, "OvertimeNotifyIntervalMinutes", settings.OvertimeNotifyIntervalMinutes.ToString());
+        await UpsertSetting(conn, "IsDarkTheme", settings.IsDarkTheme.ToString());
 
         tx.Commit();
     }
@@ -189,6 +190,8 @@ public class SqliteRepository : IRepository
             settings.BreakDurationMinutes = bv;
         if (dict.TryGetValue("OvertimeNotifyIntervalMinutes", out var o) && int.TryParse(o, out var ov))
             settings.OvertimeNotifyIntervalMinutes = ov;
+        if (dict.TryGetValue("IsDarkTheme", out var d) && bool.TryParse(d, out var dv))
+            settings.IsDarkTheme = dv;
 
         return settings;
     }

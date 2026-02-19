@@ -2,6 +2,7 @@ using System.Windows.Input;
 using DevCLT.Core.Engine;
 using DevCLT.Core.Interfaces;
 using DevCLT.Core.Models;
+using DevCLT.WindowsApp.Services;
 
 namespace DevCLT.WindowsApp.ViewModels;
 
@@ -30,14 +31,14 @@ public class MainViewModel : ViewModelBase
     // For tray menu
     public SessionState CurrentEngineState => _engine.State;
 
-    public MainViewModel(TimerEngine engine, IRepository repository, INotifier notifier, IClock clock)
+    public MainViewModel(TimerEngine engine, IRepository repository, INotifier notifier, IClock clock, IThemeService themeService)
     {
         _engine = engine;
         _repository = repository;
         _notifier = notifier;
         _clock = clock;
 
-        SetupVM = new SetupViewModel(repository);
+        SetupVM = new SetupViewModel(repository, themeService);
         TimerVM = new TimerViewModel(engine, repository, notifier, clock);
         HistoryVM = new HistoryViewModel(repository, clock);
 

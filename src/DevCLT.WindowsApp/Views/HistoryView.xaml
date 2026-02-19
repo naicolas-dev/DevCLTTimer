@@ -116,7 +116,7 @@
                                     <Style TargetType="Border">
                                         <Style.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="{StaticResource RowHoverBrush}" />
+                                                <Setter Property="Background" Value="{DynamicResource RowHoverBrush}" />
                                             </Trigger>
                                         </Style.Triggers>
                                     </Style>
@@ -149,7 +149,7 @@
                                     <TextBlock Grid.Column="3"
                                                FontFamily="{StaticResource MonoFont}"
                                                Style="{StaticResource BodyText}"
-                                               Foreground="{StaticResource WarningBrush}"
+                                               Foreground="{DynamicResource WarningBrush}"
                                                HorizontalAlignment="Center">
                                         <TextBlock.Text>
                                             <Binding Path="OvertimeTime" StringFormat="{}{0:hh\:mm}" />

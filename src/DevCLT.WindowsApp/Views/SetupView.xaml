@@ -4,6 +4,14 @@
              xmlns:vm="clr-namespace:DevCLT.WindowsApp.ViewModels">
 
     <Grid Margin="{StaticResource WindowPadding}">
+        <!-- Theme Toggle -->
+        <Button Command="{Binding ToggleThemeCommand}"
+                Content="🌓"
+                ToolTip="Alternar tema (Claro/Escuro)"
+                Style="{StaticResource TertiaryButton}"
+                HorizontalAlignment="Right" VerticalAlignment="Top"
+                Margin="0,-8,-8,0" />
+
         <StackPanel VerticalAlignment="Center" MaxWidth="400" HorizontalAlignment="Center">
 
             <!-- Header -->
@@ -74,7 +82,7 @@
                               Margin="0,0,0,24" />
 
                     <!-- Separator -->
-                    <Border BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Margin="0,0,0,16" />
+                    <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,1,0,0" Margin="0,0,0,16" />
 
                     <!-- Start Button -->
                     <Button Style="{StaticResource PrimaryButton}"

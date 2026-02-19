@@ -3,21 +3,21 @@
 
     <!-- ══ Badge.Neutral ══ -->
     <Style x:Key="BadgeNeutral" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource InfoBrush}" />
+        <Setter Property="Background" Value="{DynamicResource InfoBrush}" />
         <Setter Property="CornerRadius" Value="{StaticResource BadgeRadius}" />
         <Setter Property="Padding" Value="12,4" />
     </Style>
 
     <!-- ══ Badge.Working ══ -->
     <Style x:Key="BadgeWorking" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource BadgeWorkingBrush}" />
+        <Setter Property="Background" Value="{DynamicResource BadgeWorkingBrush}" />
         <Setter Property="CornerRadius" Value="{StaticResource BadgeRadius}" />
         <Setter Property="Padding" Value="12,4" />
     </Style>
 
     <!-- ══ Badge.Overtime ══ -->
     <Style x:Key="BadgeOvertime" TargetType="Border">
-        <Setter Property="Background" Value="{StaticResource BadgeOvertimeBrush}" />
+        <Setter Property="Background" Value="{DynamicResource BadgeOvertimeBrush}" />
         <Setter Property="CornerRadius" Value="{StaticResource BadgeRadius}" />
         <Setter Property="Padding" Value="12,4" />
     </Style>

@@ -23,7 +23,7 @@
                     Style="{StaticResource BadgeWorking}" x:Name="StateBadge">
                 <TextBlock Text="{Binding StateLabel}"
                            Style="{StaticResource LabelText}"
-                           Foreground="{StaticResource TextPrimaryBrush}" />
+                           Foreground="{DynamicResource TextPrimaryBrush}" />
             </Border>
 
             <!-- Timer Ring + Display -->

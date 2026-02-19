@@ -1,12 +1,14 @@
 using System.Windows.Input;
 using DevCLT.Core.Interfaces;
 using DevCLT.Core.Models;
+using DevCLT.WindowsApp.Services;
 
 namespace DevCLT.WindowsApp.ViewModels;
 
 public class SetupViewModel : ViewModelBase
 {
     private readonly IRepository _repository;
+    private readonly IThemeService _themeService;
 
     private int _workHours = 8;
     private int _workMinutes = 0;
@@ -31,14 +33,28 @@ public class SetupViewModel : ViewModelBase
         0 => 15, 1 => 20, 2 => 30, 3 => 60, _ => 0
     };
 
+    public bool IsDarkTheme => _themeService.IsDarkTheme;
+
     public event Action<int, int, int>? StartRequested;
 
     public ICommand StartCommand { get; }
+    public ICommand ToggleThemeCommand { get; }
 
-    public SetupViewModel(IRepository repository)
+    public SetupViewModel(IRepository repository, IThemeService themeService)
     {
         _repository = repository;
+        _themeService = themeService;
         StartCommand = new RelayCommand(OnStart, () => TotalWorkMinutes > 0);
+        ToggleThemeCommand = new RelayCommand(async () =>
+        {
+            _themeService.ToggleTheme();
+            OnPropertyChanged(nameof(IsDarkTheme));
+            
+            // Persist immediately
+            var s = await _repository.LoadSettingsAsync();
+            s.IsDarkTheme = IsDarkTheme;
+            await _repository.SaveSettingsAsync(s);
+        });
     }
 
     public async Task LoadSettings()
@@ -52,6 +68,13 @@ public class SetupViewModel : ViewModelBase
         {
             15 => 0, 20 => 1, 30 => 2, 60 => 3, _ => 4
         };
+        
+        // Sync theme
+        if (s.IsDarkTheme != IsDarkTheme)
+        {
+            _themeService.ToggleTheme();
+            OnPropertyChanged(nameof(IsDarkTheme));
+        }
     }
 
     private async void OnStart()
@@ -60,7 +83,8 @@ public class SetupViewModel : ViewModelBase
         {
             WorkDurationMinutes = TotalWorkMinutes,
             BreakDurationMinutes = TotalBreakMinutes,
-            OvertimeNotifyIntervalMinutes = OvertimeNotifyMinutes
+            OvertimeNotifyIntervalMinutes = OvertimeNotifyMinutes,
+            IsDarkTheme = IsDarkTheme
         });
         StartRequested?.Invoke(TotalWorkMinutes, TotalBreakMinutes, OvertimeNotifyMinutes);
     }
