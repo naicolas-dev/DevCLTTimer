@@ -32,14 +32,20 @@ public partial class MainWindow : Window
             ToolTipText = "Dev CLT Timer",
         };
 
-        // Try to use app icon, fallback to default
+        // Fix: Load icon directly from embedded resources for reliability in all modes (Debug/Release/Publish)
         try
         {
-            var exePath = System.IO.Path.Combine(AppContext.BaseDirectory, "DevCLTTimer.exe");
-            if (System.IO.File.Exists(exePath))
-                _trayIcon.Icon = System.Drawing.Icon.ExtractAssociatedIcon(exePath);
+            var iconUri = new Uri("pack://application:,,,/app.ico");
+            var streamInfo = System.Windows.Application.GetResourceStream(iconUri);
+            if (streamInfo != null)
+            {
+                using var stream = streamInfo.Stream;
+                _trayIcon.Icon = new System.Drawing.Icon(stream);
+            }
             else
+            {
                 _trayIcon.Icon = SystemIcons.Application;
+            }
         }
         catch
         {
@@ -49,20 +55,57 @@ public partial class MainWindow : Window
         _trayIcon.TrayMouseDoubleClick += (_, _) => ShowWindow();
         UpdateTrayMenu();
 
-        // Update menu when engine state changes
+        // Subscribe to ViewModel changes for dynamic tooltip
         if (_viewModel != null)
         {
             _viewModel.TimerVM.PropertyChanged += (_, e) =>
             {
                 if (e.PropertyName == nameof(TimerViewModel.CurrentState))
+                {
                     Dispatcher.Invoke(UpdateTrayMenu);
+                    Dispatcher.Invoke(UpdateTrayTooltip);
+                }
+                else if (e.PropertyName == nameof(TimerViewModel.DisplayTime))
+                {
+                    Dispatcher.Invoke(UpdateTrayTooltip);
+                }
             };
         }
+    }
+
+    private void UpdateTrayTooltip()
+    {
+        if (_trayIcon == null || _viewModel == null) return;
+        _trayIcon.ToolTipText = _viewModel.TimerVM.TrayStatusText;
     }
 
     private void UpdateTrayMenu()
     {
         var menu = new System.Windows.Controls.ContextMenu();
+
+        // 1. Status Item (acts as title/timer display)
+        var statusItem = new System.Windows.Controls.MenuItem
+        {
+            FontWeight = FontWeights.Bold,
+            IsEnabled = false // Visual indicator only, not interactive
+        };
+        
+        // Use Binding for real-time updates even when menu is open
+        if (_viewModel != null)
+        {
+            var binding = new System.Windows.Data.Binding("TimerVM.TrayStatusText")
+            {
+                Source = _viewModel
+            };
+            statusItem.SetBinding(System.Windows.Controls.HeaderedItemsControl.HeaderProperty, binding);
+        }
+        else
+        {
+            statusItem.Header = "Carregando...";
+        }
+
+        menu.Items.Add(statusItem);
+        menu.Items.Add(new System.Windows.Controls.Separator());
 
         var openItem = new System.Windows.Controls.MenuItem { Header = "Abrir Dev CLT Timer" };
         openItem.Click += (_, _) => ShowWindow();
@@ -103,6 +146,9 @@ public partial class MainWindow : Window
         menu.Items.Add(exitItem);
 
         _trayIcon!.ContextMenu = menu;
+        
+        // Initial update of text
+        UpdateTrayTooltip();
     }
 
     private void ShowWindow()

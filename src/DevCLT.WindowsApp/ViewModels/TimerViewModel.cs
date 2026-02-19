@@ -36,6 +36,9 @@ public class TimerViewModel : ViewModelBase
     public bool ShowEndDayConfirm { get => _showEndDayConfirm; set => SetField(ref _showEndDayConfirm, value); }
     public bool IsBreakBackground { get => _isBreakBackground; set => SetField(ref _isBreakBackground, value); }
     public string BadgeStyle { get => _badgeStyle; set => SetField(ref _badgeStyle, value); }
+    
+    private string _trayStatusText = "Dev CLT Timer";
+    public string TrayStatusText { get => _trayStatusText; set => SetField(ref _trayStatusText, value); }
 
     public SessionState CurrentState => _engine.State;
 
@@ -174,6 +177,14 @@ public class TimerViewModel : ViewModelBase
         }
 
         IsWarning = _engine.IsWarning;
+        IsWarning = _engine.IsWarning;
+        
+        // Update Tray Text
+        if (state == SessionState.Idle)
+            TrayStatusText = "Dev CLT Timer (Parado)";
+        else
+            TrayStatusText = $"{StateLabel}: {DisplayTime}";
+
         OnPropertyChanged(nameof(CurrentState));
     }
 
