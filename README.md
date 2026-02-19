@@ -4,7 +4,7 @@ O **DevCLT Timer** é a ferramenta definitiva para desenvolvedores CLT que preci
 
 Com uma interface moderna e discreta, ele gerencia seus horários de trabalho, pausas e horas extras, garantindo que você mantenha o foco no código via **Atalhos Globais** e notificações inteligentes.
 
-![DevCLT Timer Screenshot](https://via.placeholder.com/800x450?text=Preview+DevCLT+Timer) <!-- Substituir por screenshot real -->
+![DevCLT Timer Screenshot](https://i.imgur.com/Do8xJUV.jpeg)
 
 ---
 
@@ -37,7 +37,7 @@ Com uma interface moderna e discreta, ele gerencia seus horários de trabalho, p
 
 ## 🛠️ Configuração
 
-Acesse a tela de **Settings** (ícone de engrenagem) para:
+Acesse a tela de **Configurações** (ícone de engrenagem) para:
 - **Personalizar Atalhos**: Grave suas próprias combinações de teclas para as ações globais.
 - **Ativar/Desativar Hotkeys**: Controle total sobre quando os atalhos devem funcionar.
 
@@ -55,7 +55,7 @@ Acesse a tela de **Settings** (ícone de engrenagem) para:
 
 ## 📦 Instalação
 
-Baixe a versão mais recente na aba [Releases do GitHub](#).
+Baixe a versão mais recente na aba [Releases do GitHub](https://github.com/naicolas-dev/DevCLTTimer/releases).
 O executável é *portable* (não requer instalação) e auto-contido.
 
 ---
