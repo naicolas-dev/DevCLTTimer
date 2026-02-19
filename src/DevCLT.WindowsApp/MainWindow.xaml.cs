@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Drawing;
 using System.Windows;
+using System.Windows.Interop;
 using DevCLT.Core.Models;
+using DevCLT.WindowsApp.Services;
 using DevCLT.WindowsApp.ViewModels;
 using Hardcodet.Wpf.TaskbarNotification;
 
@@ -11,6 +13,7 @@ public partial class MainWindow : Window
 {
     private TaskbarIcon? _trayIcon;
     private MainViewModel? _viewModel;
+    private HotkeyService? _hotkeyService;
     private bool _forceClose;
 
     public MainWindow()
@@ -18,11 +21,13 @@ public partial class MainWindow : Window
         InitializeComponent();
     }
 
-    public void Initialize(MainViewModel viewModel)
+    public void Initialize(MainViewModel viewModel, HotkeyService hotkeyService)
     {
         _viewModel = viewModel;
+        _hotkeyService = hotkeyService;
         DataContext = viewModel;
         SetupTrayIcon();
+        SetupHotkeys();
     }
 
     private void SetupTrayIcon()
@@ -118,7 +123,11 @@ public partial class MainWindow : Window
             if (state == SessionState.Working)
             {
                 var breakItem = new System.Windows.Controls.MenuItem { Header = "Iniciar Pausa" };
-                breakItem.Click += (_, _) => _viewModel.TimerVM.StartBreakCommand.Execute(null);
+                breakItem.Click += (_, _) =>
+                {
+                    ShowWindow();
+                    _viewModel.TimerVM.ShowStartBreakConfirmCommand.Execute(null);
+                };
                 menu.Items.Add(breakItem);
             }
             else if (state == SessionState.BreakEndedWaitingUser)
@@ -151,17 +160,122 @@ public partial class MainWindow : Window
         UpdateTrayTooltip();
     }
 
+    private void SetupHotkeys()
+    {
+        if (_hotkeyService == null) return;
+
+        Loaded += (_, _) =>
+        {
+            var helper = new WindowInteropHelper(this);
+            _hotkeyService.Register(helper.Handle);
+        };
+
+        _hotkeyService.JornadaHotkeyPressed += OnJornadaHotkey;
+        _hotkeyService.PausaHotkeyPressed += OnPausaHotkey;
+        _hotkeyService.OvertimeHotkeyPressed += OnOvertimeHotkey;
+    }
+
+    private void OnJornadaHotkey()
+    {
+        if (_viewModel == null) return;
+        Dispatcher.Invoke(() =>
+        {
+            var vm = _viewModel.TimerVM;
+
+            // If end-day confirm modal is already showing, confirm it
+            if (vm.ShowEndDayConfirm)
+            {
+                vm.ConfirmEndDayCommand.Execute(null);
+                return;
+            }
+
+            var state = _viewModel.CurrentEngineState;
+            switch (state)
+            {
+                case SessionState.Idle:
+                    ShowWindow();
+                    if (_viewModel.SetupVM.StartCommand.CanExecute(null))
+                        _viewModel.SetupVM.StartCommand.Execute(null);
+                    break;
+                case SessionState.Working:
+                    ShowWindow();
+                    vm.ShowEndDayConfirmCommand.Execute(null);
+                    break;
+            }
+        });
+    }
+
+    private void OnPausaHotkey()
+    {
+        if (_viewModel == null) return;
+        Dispatcher.Invoke(() =>
+        {
+            var vm = _viewModel.TimerVM;
+
+            // If start-break confirm modal is already showing, confirm it
+            if (vm.ShowStartBreakConfirm)
+            {
+                vm.ConfirmStartBreakCommand.Execute(null);
+                return;
+            }
+
+            // If end-break-early confirm modal is already showing, confirm it
+            if (vm.ShowEndBreakEarlyConfirm)
+            {
+                vm.EndBreakEarlyCommand.Execute(null);
+                return;
+            }
+
+            var state = _viewModel.CurrentEngineState;
+            switch (state)
+            {
+                case SessionState.Working:
+                    ShowWindow();
+                    vm.ShowStartBreakConfirmCommand.Execute(null);
+                    break;
+                case SessionState.Break:
+                    ShowWindow();
+                    vm.ShowEndBreakEarlyConfirmCommand.Execute(null);
+                    break;
+            }
+        });
+    }
+
+    private void OnOvertimeHotkey()
+    {
+        if (_viewModel == null) return;
+        Dispatcher.Invoke(() =>
+        {
+            var state = _viewModel.CurrentEngineState;
+            switch (state)
+            {
+                case SessionState.WorkCompleted:
+                    ShowWindow();
+                    _viewModel.TimerVM.StartOvertimeCommand.Execute(null);
+                    break;
+                case SessionState.Overtime:
+                    ShowWindow();
+                    _viewModel.TimerVM.StopOvertimeCommand.Execute(null);
+                    break;
+            }
+        });
+    }
+
     private void ShowWindow()
     {
         Show();
         WindowState = WindowState.Normal;
         Activate();
+        Topmost = true;
+        Topmost = false;
+        Focus();
     }
 
     private void Window_Closing(object sender, CancelEventArgs e)
     {
         if (_forceClose)
         {
+            _hotkeyService?.Dispose();
             _trayIcon?.Dispose();
             return;
         }
@@ -175,6 +289,7 @@ public partial class MainWindow : Window
             return;
         }
 
+        _hotkeyService?.Dispose();
         _trayIcon?.Dispose();
     }
 

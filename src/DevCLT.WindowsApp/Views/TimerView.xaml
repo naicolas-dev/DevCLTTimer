@@ -7,6 +7,7 @@
     <UserControl.Resources>
         <conv:BoolToVisibilityConverter x:Key="BoolVis" />
         <conv:StateToVisibilityConverter x:Key="StateVis" />
+        <conv:HotkeyToKbdConverter x:Key="HotkeyKbd" />
     </UserControl.Resources>
 
     <Grid>
@@ -42,25 +43,58 @@
                 <!-- Working state: "Iniciar pausa" + "Encerrar jornada" -->
                 <StackPanel Visibility="{Binding CurrentState, Converter={StaticResource StateVis}, ConverterParameter=Working}">
                     <Button Style="{StaticResource PrimaryButton}"
-                            Content="Iniciar pausa"
-                            Command="{Binding StartBreakCommand}"
+                            Command="{Binding ShowStartBreakConfirmCommand}"
                             HorizontalAlignment="Stretch"
-                            Margin="0,0,0,8" />
+                            Margin="0,0,0,8">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock Text="Iniciar pausa" VerticalAlignment="Center" />
+                                <ContentControl Content="{Binding DataContext.SettingsVM.PausaKey, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource HotkeyKbd}}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
                     <Button Style="{StaticResource TertiaryButton}"
-                            Content="Encerrar jornada"
                             Command="{Binding ShowEndDayConfirmCommand}"
-                            HorizontalAlignment="Center" />
+                            HorizontalAlignment="Center">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Encerrar jornada" VerticalAlignment="Center" />
+                                <ContentControl Content="{Binding DataContext.SettingsVM.JornadaKey, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource HotkeyKbd}}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
                 </StackPanel>
 
-                <!-- Break state: no actions (waiting for break to end) -->
+                <StackPanel Visibility="{Binding CurrentState, Converter={StaticResource StateVis}, ConverterParameter=Break}">
+                    <Button Style="{StaticResource SecondaryButton}"
+                            Command="{Binding ShowEndBreakEarlyConfirmCommand}"
+                            HorizontalAlignment="Center">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Encerrar pausa" VerticalAlignment="Center" />
+                                <ContentControl Content="{Binding DataContext.SettingsVM.PausaKey, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource HotkeyKbd}}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
 
                 <!-- BreakEndedWaitingUser: handled by modal -->
 
-                <!-- Overtime: "Encerrar hora extra" -->
-                <Button Style="{StaticResource DangerButton}"
-                        Content="Encerrar hora extra"
-                        Command="{Binding StopOvertimeCommand}"
-                        Visibility="{Binding CurrentState, Converter={StaticResource StateVis}, ConverterParameter=Overtime}" />
+                <StackPanel Visibility="{Binding CurrentState, Converter={StaticResource StateVis}, ConverterParameter=Overtime}">
+                    <Button Style="{StaticResource DangerButton}"
+                            Command="{Binding StopOvertimeCommand}">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Encerrar hora extra" VerticalAlignment="Center" />
+                                <ContentControl Content="{Binding DataContext.SettingsVM.OvertimeKey, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource HotkeyKbd}}" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+
+                <!-- WorkCompleted: modal has overtime button -->
+                <StackPanel Visibility="{Binding ShowWorkCompletedModal, Converter={StaticResource BoolVis}}">
+                </StackPanel>
             </StackPanel>
         </Grid>
 
@@ -129,6 +163,54 @@
                     <Button Style="{StaticResource SecondaryButton}"
                             Content="Cancelar"
                             Command="{Binding CancelEndDayCommand}"
+                            HorizontalAlignment="Stretch" />
+                </StackPanel>
+            </Border>
+        </Border>
+        <!-- ══ Modal: Start Break Confirm ══ -->
+        <Border Visibility="{Binding ShowStartBreakConfirm, Converter={StaticResource BoolVis}}"
+                Style="{StaticResource ModalOverlay}">
+            <Border Style="{StaticResource ModalCard}">
+                <StackPanel>
+                    <TextBlock Text="Iniciar pausa?"
+                               Style="{StaticResource HeaderText}"
+                               Margin="0,0,0,8" />
+                    <TextBlock Text="Deseja pausar o trabalho agora?"
+                               Style="{StaticResource BodyText}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,24" />
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Content="Sim, iniciar pausa"
+                            Command="{Binding ConfirmStartBreakCommand}"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,0,8" />
+                    <Button Style="{StaticResource SecondaryButton}"
+                            Content="Cancelar"
+                            Command="{Binding CancelStartBreakCommand}"
+                            HorizontalAlignment="Stretch" />
+                </StackPanel>
+            </Border>
+        </Border>
+        <!-- ══ Modal: End Break Early Confirm ══ -->
+        <Border Visibility="{Binding ShowEndBreakEarlyConfirm, Converter={StaticResource BoolVis}}"
+                Style="{StaticResource ModalOverlay}">
+            <Border Style="{StaticResource ModalCard}">
+                <StackPanel>
+                    <TextBlock Text="Encerrar pausa?"
+                               Style="{StaticResource HeaderText}"
+                               Margin="0,0,0,8" />
+                    <TextBlock Text="Deseja retornar ao trabalho antes da pausa terminar?"
+                               Style="{StaticResource BodyText}"
+                               TextWrapping="Wrap"
+                               Margin="0,0,0,24" />
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Content="Sim, retornar ao trabalho"
+                            Command="{Binding EndBreakEarlyCommand}"
+                            HorizontalAlignment="Stretch"
+                            Margin="0,0,0,8" />
+                    <Button Style="{StaticResource SecondaryButton}"
+                            Content="Cancelar"
+                            Command="{Binding CancelEndBreakEarlyCommand}"
                             HorizontalAlignment="Stretch" />
                 </StackPanel>
             </Border>

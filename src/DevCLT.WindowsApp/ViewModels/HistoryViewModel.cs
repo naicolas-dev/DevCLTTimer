@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Windows.Input;
 using DevCLT.Core.Interfaces;
 using DevCLT.Core.Models;
@@ -10,12 +11,14 @@ public class HistoryViewModel : ViewModelBase
 {
     private readonly IRepository _repository;
     private readonly IClock _clock;
+    private readonly ICsvExportService _csvExport;
     private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
 
-    private int _selectedTab; // 0=Week, 1=Month
+    private int _selectedTab; // 0=Week, 1=Month, 2=Year
     private string _periodLabel = "";
     private int _weekOffset;
     private int _monthOffset;
+    private int _yearOffset;
     private bool _isEmpty;
 
     public ObservableCollection<DaySummary> DaySummaries { get; } = new();
@@ -23,7 +26,7 @@ public class HistoryViewModel : ViewModelBase
     public int SelectedTab { get => _selectedTab; set { SetField(ref _selectedTab, value); OnPropertyChanged(nameof(GoToTodayLabel)); _ = LoadData(); } }
     public string PeriodLabel { get => _periodLabel; set => SetField(ref _periodLabel, value); }
     public bool IsEmpty { get => _isEmpty; set => SetField(ref _isEmpty, value); }
-    public string GoToTodayLabel => _selectedTab == 0 ? "Esta semana" : "Este mês";
+    public string GoToTodayLabel => _selectedTab switch { 0 => "Esta semana", 1 => "Este mês", _ => "Este ano" };
 
     // Period totals
     private string _totalWork = "";
@@ -39,17 +42,20 @@ public class HistoryViewModel : ViewModelBase
     public ICommand NextPeriodCommand { get; }
     public ICommand GoToTodayCommand { get; }
     public ICommand GoBackCommand { get; }
+    public ICommand ExportCsvCommand { get; }
 
     public event Action? BackRequested;
 
-    public HistoryViewModel(IRepository repository, IClock clock)
+    public HistoryViewModel(IRepository repository, IClock clock, ICsvExportService csvExport)
     {
         _repository = repository;
         _clock = clock;
+        _csvExport = csvExport;
         PreviousPeriodCommand = new RelayCommand(() => { AdjustOffset(-1); _ = LoadData(); });
         NextPeriodCommand = new RelayCommand(() => { AdjustOffset(1); _ = LoadData(); });
-        GoToTodayCommand = new RelayCommand(() => { _weekOffset = 0; _monthOffset = 0; _ = LoadData(); });
+        GoToTodayCommand = new RelayCommand(() => { _weekOffset = 0; _monthOffset = 0; _yearOffset = 0; _ = LoadData(); });
         GoBackCommand = new RelayCommand(() => BackRequested?.Invoke());
+        ExportCsvCommand = new RelayCommand(async () => await ExportCsvAsync());
     }
 
     public async Task LoadData()
@@ -69,20 +75,51 @@ public class HistoryViewModel : ViewModelBase
             var year = from.Year;
             PeriodLabel = $"{fromDay}–{toDay} {monthName} {year}";
         }
-        else // Month
+        else if (SelectedTab == 1) // Month
         {
             var refDate = DateTime.Today.AddMonths(_monthOffset);
             from = new DateTime(refDate.Year, refDate.Month, 1);
             to = from.AddMonths(1);
             PeriodLabel = from.ToString("MMMM yyyy", PtBr);
         }
+        else // Year
+        {
+            var refYear = DateTime.Today.Year + _yearOffset;
+            from = new DateTime(refYear, 1, 1);
+            to = new DateTime(refYear + 1, 1, 1);
+            PeriodLabel = refYear.ToString();
+        }
 
         var summaries = await _repository.GetDaySummariesAsync(
             from.ToUniversalTime(), to.ToUniversalTime());
 
         DaySummaries.Clear();
-        foreach (var s in summaries)
-            DaySummaries.Add(s);
+
+        if (SelectedTab == 2) // Year: aggregate by month
+        {
+            var grouped = summaries
+                .Where(s => DateTime.TryParse(s.DateLocal, out _))
+                .GroupBy(s => DateTime.Parse(s.DateLocal).Month)
+                .OrderBy(g => g.Key);
+
+            foreach (var g in grouped)
+            {
+                var monthName = new DateTime(from.Year, g.Key, 1).ToString("MMMM", PtBr);
+                monthName = char.ToUpper(monthName[0]) + monthName[1..];
+                DaySummaries.Add(new DaySummary
+                {
+                    DateLocal = monthName,
+                    TotalWorkSeconds = g.Sum(s => s.TotalWorkSeconds),
+                    TotalBreakSeconds = g.Sum(s => s.TotalBreakSeconds),
+                    TotalOvertimeSeconds = g.Sum(s => s.TotalOvertimeSeconds),
+                });
+            }
+        }
+        else
+        {
+            foreach (var s in summaries)
+                DaySummaries.Add(s);
+        }
 
         IsEmpty = DaySummaries.Count == 0;
 
@@ -100,12 +137,18 @@ public class HistoryViewModel : ViewModelBase
     {
         if (SelectedTab == 0)
             _weekOffset += delta;
-        else
+        else if (SelectedTab == 1)
             _monthOffset += delta;
+        else
+            _yearOffset += delta;
     }
 
     private static string FormatOrDash(int totalSeconds)
-        => totalSeconds <= 0 ? "—" : TimeSpan.FromSeconds(totalSeconds).ToString(@"hh\:mm");
+    {
+        if (totalSeconds <= 0) return "—";
+        var ts = TimeSpan.FromSeconds(totalSeconds);
+        return $"{(int)ts.TotalHours}:{ts.Minutes:D2}";
+    }
 
     private static DateTime GetIsoWeekStart(DateTime date)
     {
@@ -113,5 +156,16 @@ public class HistoryViewModel : ViewModelBase
         // ISO: Monday = 0
         var daysToMonday = (dayOfWeek == 0) ? 6 : dayOfWeek - 1;
         return date.Date.AddDays(-daysToMonday);
+    }
+
+    private async Task ExportCsvAsync()
+    {
+        if (DaySummaries.Count == 0) return;
+
+        var tabName = SelectedTab switch { 0 => "semana", 1 => "mes", _ => "ano" };
+        var safePeriod = Regex.Replace(PeriodLabel, @"[^\w\d]+", "-").Trim('-').ToLowerInvariant();
+        var fileName = $"devclt_{tabName}_{safePeriod}.csv";
+
+        await _csvExport.ExportAsync(DaySummaries, fileName);
     }
 }

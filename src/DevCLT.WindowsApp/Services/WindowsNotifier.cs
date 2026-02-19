@@ -1,10 +1,24 @@
 using DevCLT.Core.Interfaces;
+using DevCLT.WindowsApp.Services;
 using Microsoft.Toolkit.Uwp.Notifications;
 
 namespace DevCLT.WindowsApp.Services;
 
 public class WindowsNotifier : INotifier
 {
+    private readonly HotkeyService? _hotkeyService;
+
+    public WindowsNotifier() { }
+
+    public WindowsNotifier(HotkeyService hotkeyService)
+    {
+        _hotkeyService = hotkeyService;
+    }
+
+    private string PausaKey => _hotkeyService?.PausaKey ?? "Ctrl+Alt+P";
+    private string JornadaKey => _hotkeyService?.JornadaKey ?? "Ctrl+Alt+I";
+    private string OvertimeKey => _hotkeyService?.OvertimeKey ?? "Ctrl+Alt+X";
+
     public void NotifyBreakEnded()
     {
         try
@@ -12,7 +26,7 @@ public class WindowsNotifier : INotifier
             new ToastContentBuilder()
                 .AddArgument("action", "viewApp")
                 .AddText("Pausa concluída")
-                .AddText("Clique para retomar o trabalho")
+                .AddText($"{PausaKey} para retomar o trabalho")
                 .Show();
         }
         catch
@@ -28,7 +42,7 @@ public class WindowsNotifier : INotifier
             new ToastContentBuilder()
                 .AddArgument("action", "viewApp")
                 .AddText("Jornada concluída! 🎉")
-                .AddText("Você completou suas horas de trabalho.")
+                .AddText($"{OvertimeKey} para hora extra · {JornadaKey} para encerrar")
                 .Show();
         }
         catch { }
@@ -41,7 +55,7 @@ public class WindowsNotifier : INotifier
             new ToastContentBuilder()
                 .AddArgument("action", "viewApp")
                 .AddText("Hora extra em andamento")
-                .AddText($"Já são {elapsed:hh\\:mm\\:ss} de hora extra.")
+                .AddText($"Já são {elapsed:hh\\:mm\\:ss} de hora extra. {OvertimeKey} para encerrar.")
                 .Show();
         }
         catch { }

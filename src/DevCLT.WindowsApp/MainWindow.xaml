@@ -7,8 +7,7 @@
         xmlns:controls="clr-namespace:DevCLT.WindowsApp.Controls"
         Title="Dev CLT Timer"
         Width="460" Height="640"
-        MinWidth="360" MinHeight="500"
-        ResizeMode="CanResize"
+        ResizeMode="NoResize"
         Background="{DynamicResource BackgroundBrush}"
         Closing="Window_Closing"
         Icon="pack://application:,,,/app.ico">
@@ -17,7 +16,7 @@
         <WindowChrome CaptionHeight="32"
                       GlassFrameThickness="-1"
                       CornerRadius="0"
-                      ResizeBorderThickness="4"
+                      ResizeBorderThickness="0"
                       UseAeroCaptionButtons="False"/>
     </WindowChrome.WindowChrome>
 
@@ -31,6 +30,9 @@
         </DataTemplate>
         <DataTemplate DataType="{x:Type vm:HistoryViewModel}">
             <views:HistoryView />
+        </DataTemplate>
+        <DataTemplate DataType="{x:Type vm:SettingsViewModel}">
+            <views:SettingsView />
         </DataTemplate>
     </Window.Resources>
 

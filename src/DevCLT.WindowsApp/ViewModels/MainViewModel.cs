@@ -24,17 +24,19 @@ public class MainViewModel : ViewModelBase
     public SetupViewModel SetupVM { get; }
     public TimerViewModel TimerVM { get; }
     public HistoryViewModel HistoryVM { get; }
+    public SettingsViewModel SettingsVM { get; }
 
     public ICommand ResumeRecoveryCommand { get; }
     public ICommand DiscardRecoveryCommand { get; }
     public ICommand ShowHistoryCommand { get; }
+    public ICommand ShowSettingsCommand { get; }
     public ICommand ToggleThemeCommand { get; }
     public bool IsDarkTheme => _themeService.IsDarkTheme;
 
     // For tray menu
     public SessionState CurrentEngineState => _engine.State;
 
-    public MainViewModel(TimerEngine engine, IRepository repository, INotifier notifier, IClock clock, IThemeService themeService)
+    public MainViewModel(TimerEngine engine, IRepository repository, INotifier notifier, IClock clock, IThemeService themeService, ICsvExportService csvExport, HotkeyService hotkeyService)
     {
         _engine = engine;
         _repository = repository;
@@ -44,15 +46,18 @@ public class MainViewModel : ViewModelBase
 
         SetupVM = new SetupViewModel(repository, themeService);
         TimerVM = new TimerViewModel(engine, repository, notifier, clock);
-        HistoryVM = new HistoryViewModel(repository, clock);
+        HistoryVM = new HistoryViewModel(repository, clock, csvExport);
+        SettingsVM = new SettingsViewModel(repository, hotkeyService);
 
         SetupVM.StartRequested += OnStartRequested;
         TimerVM.SessionEnded += OnSessionEnded;
         HistoryVM.BackRequested += () => ShowSetup();
+        SettingsVM.BackRequested += () => ShowSetup();
 
         ResumeRecoveryCommand = new RelayCommand(async () => await ResumeRecovery());
         DiscardRecoveryCommand = new RelayCommand(async () => await DiscardRecovery());
         ShowHistoryCommand = new RelayCommand(async () => await GoToHistory());
+        ShowSettingsCommand = new RelayCommand(async () => await GoToSettings());
         ToggleThemeCommand = new RelayCommand(async () =>
         {
             _themeService.ToggleTheme();
@@ -97,6 +102,12 @@ public class MainViewModel : ViewModelBase
     {
         CurrentView = HistoryVM;
         await HistoryVM.LoadData();
+    }
+
+    private async Task GoToSettings()
+    {
+        CurrentView = SettingsVM;
+        await SettingsVM.LoadSettings();
     }
 
     private async Task ResumeRecovery()

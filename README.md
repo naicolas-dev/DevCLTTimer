@@ -62,9 +62,9 @@ src/DevCLT.WindowsApp/bin/Release/net8.0-windows10.0.17763.0/win-x64/publish/Dev
 - [x] Title Bar Personalizada
 - [x] Satoshi font embarcada
 - [x] Tray tooltip e Menu de Contexto com tempo restante
-- [ ] Painel anual
-- [ ] Hotkeys
-- [ ] Export CSV
+- [x] Painel anual
+- [x] Export CSV
+- [x] Hotkeys
 
 ## V2
 

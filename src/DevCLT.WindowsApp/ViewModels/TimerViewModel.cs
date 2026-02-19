@@ -21,6 +21,8 @@ public class TimerViewModel : ViewModelBase
     private bool _showBreakEndedModal;
     private bool _showWorkCompletedModal;
     private bool _showEndDayConfirm;
+    private bool _showStartBreakConfirm;
+    private bool _showEndBreakEarlyConfirm;
     private bool _isBreakBackground;
     private string _badgeStyle = "Working";
 
@@ -34,6 +36,8 @@ public class TimerViewModel : ViewModelBase
     public bool ShowBreakEndedModal { get => _showBreakEndedModal; set => SetField(ref _showBreakEndedModal, value); }
     public bool ShowWorkCompletedModal { get => _showWorkCompletedModal; set => SetField(ref _showWorkCompletedModal, value); }
     public bool ShowEndDayConfirm { get => _showEndDayConfirm; set => SetField(ref _showEndDayConfirm, value); }
+    public bool ShowStartBreakConfirm { get => _showStartBreakConfirm; set => SetField(ref _showStartBreakConfirm, value); }
+    public bool ShowEndBreakEarlyConfirm { get => _showEndBreakEarlyConfirm; set => SetField(ref _showEndBreakEarlyConfirm, value); }
     public bool IsBreakBackground { get => _isBreakBackground; set => SetField(ref _isBreakBackground, value); }
     public string BadgeStyle { get => _badgeStyle; set => SetField(ref _badgeStyle, value); }
     
@@ -51,6 +55,12 @@ public class TimerViewModel : ViewModelBase
     public ICommand ShowEndDayConfirmCommand { get; }
     public ICommand CancelEndDayCommand { get; }
     public ICommand ConfirmEndDayCommand { get; }
+    public ICommand ShowStartBreakConfirmCommand { get; }
+    public ICommand CancelStartBreakCommand { get; }
+    public ICommand ConfirmStartBreakCommand { get; }
+    public ICommand EndBreakEarlyCommand { get; }
+    public ICommand ShowEndBreakEarlyConfirmCommand { get; }
+    public ICommand CancelEndBreakEarlyCommand { get; }
 
     public event Action? SessionEnded;
 
@@ -80,6 +90,15 @@ public class TimerViewModel : ViewModelBase
             () => _engine.State == SessionState.Working);
         CancelEndDayCommand = new RelayCommand(() => ShowEndDayConfirm = false);
         ConfirmEndDayCommand = new RelayCommand(async () => await DoEndDayEarly());
+        ShowStartBreakConfirmCommand = new RelayCommand(() => ShowStartBreakConfirm = true,
+            () => _engine.State == SessionState.Working);
+        CancelStartBreakCommand = new RelayCommand(() => ShowStartBreakConfirm = false);
+        ConfirmStartBreakCommand = new RelayCommand(async () => await DoConfirmStartBreak());
+        EndBreakEarlyCommand = new RelayCommand(async () => await DoEndBreakEarly(),
+            () => _engine.State == SessionState.Break);
+        ShowEndBreakEarlyConfirmCommand = new RelayCommand(() => ShowEndBreakEarlyConfirm = true,
+            () => _engine.State == SessionState.Break);
+        CancelEndBreakEarlyCommand = new RelayCommand(() => ShowEndBreakEarlyConfirm = false);
 
         _ticker = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(500) };
         _ticker.Tick += (_, _) => Tick();
@@ -225,6 +244,28 @@ public class TimerViewModel : ViewModelBase
         {
             SessionId = _engine.CurrentSessionId,
             Type = SegmentType.Break,
+            StartUtc = _clock.UtcNow
+        };
+        seg.Id = await _repository.CreateSegmentAsync(seg);
+        _currentSegmentId = seg.Id;
+    }
+
+    private async Task DoConfirmStartBreak()
+    {
+        ShowStartBreakConfirm = false;
+        await DoStartBreak();
+    }
+
+    private async Task DoEndBreakEarly()
+    {
+        ShowEndBreakEarlyConfirm = false;
+        await FinalizeCurrentSegment();
+        _engine.EndBreakEarly();
+
+        var seg = new Segment
+        {
+            SessionId = _engine.CurrentSessionId,
+            Type = SegmentType.Work,
             StartUtc = _clock.UtcNow
         };
         seg.Id = await _repository.CreateSegmentAsync(seg);

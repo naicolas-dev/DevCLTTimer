@@ -20,7 +20,11 @@ public partial class App : Application
             // Services
             IAppPaths paths = new WindowsAppPaths();
             IClock clock = new SystemClock();
-            INotifier notifier = new WindowsNotifier();
+
+            // Hotkeys (created early so notifier can reference configured keys)
+            var hotkeyService = new HotkeyService();
+
+            INotifier notifier = new WindowsNotifier(hotkeyService);
 
             // Ensure data directory exists
             Directory.CreateDirectory(paths.DataDirectory);
@@ -33,17 +37,24 @@ public partial class App : Application
 
             // Core Engine
             var engine = new TimerEngine(clock);
-            
+
             // Theme Service
             IThemeService themeService = new ThemeService();
 
+            // CSV Export
+            ICsvExportService csvExport = new CsvExportService();
+
             // Main ViewModel
-            var mainVM = new MainViewModel(engine, repository, notifier, clock, themeService);
+            var mainVM = new MainViewModel(engine, repository, notifier, clock, themeService, csvExport, hotkeyService);
             await mainVM.InitializeAsync();
+
+            // Initialize hotkey config from saved settings
+            var settings = await repository.LoadSettingsAsync();
+            hotkeyService.UpdateConfiguration(settings.HotkeysEnabled, settings.HotkeyJornada, settings.HotkeyPausa, settings.HotkeyOvertime);
 
             // Window — create manually (no StartupUri)
             var window = new MainWindow();
-            window.Initialize(mainVM);
+            window.Initialize(mainVM, hotkeyService);
             window.Show();
 
             // Handle Notification Clicks
