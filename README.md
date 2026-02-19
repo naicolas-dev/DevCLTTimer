@@ -61,7 +61,7 @@ src/DevCLT.WindowsApp/bin/Release/net8.0-windows10.0.17763.0/win-x64/publish/Dev
 - [x] Dark theme (Floresta Noturna)
 - [x] Title Bar Personalizada
 - [x] Satoshi font embarcada
-- [ ] Tray tooltip e Menu de Contexto com tempo restante
+- [x] Tray tooltip e Menu de Contexto com tempo restante
 - [ ] Painel anual
 - [ ] Hotkeys
 - [ ] Export CSV
