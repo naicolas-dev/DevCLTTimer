@@ -8,7 +8,7 @@
         Width="460" Height="640"
         MinWidth="360" MinHeight="500"
         WindowStyle="SingleBorderWindow"
-        Background="{StaticResource BackgroundBrush}"
+        Background="{DynamicResource BackgroundBrush}"
         Closing="Window_Closing"
         Icon="pack://application:,,,/app.ico">
 
@@ -38,7 +38,7 @@
                     Visibility="{Binding ShowRecoveryCard, Converter={StaticResource BoolVis}}"
                     Style="{StaticResource CardBordered}"
                     Margin="24,24,24,0"
-                    BorderBrush="{StaticResource WarningBrush}">
+                    BorderBrush="{DynamicResource WarningBrush}">
                 <StackPanel>
                     <TextBlock Text="Parece que o app foi fechado enquanto o timer rodava."
                                Style="{StaticResource BodyText}"
