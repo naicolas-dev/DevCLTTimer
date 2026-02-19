@@ -10,6 +10,7 @@ public class WindowsNotifier : INotifier
         try
         {
             new ToastContentBuilder()
+                .AddArgument("action", "viewApp")
                 .AddText("Pausa concluída")
                 .AddText("Clique para retomar o trabalho")
                 .Show();
@@ -25,6 +26,7 @@ public class WindowsNotifier : INotifier
         try
         {
             new ToastContentBuilder()
+                .AddArgument("action", "viewApp")
                 .AddText("Jornada concluída! 🎉")
                 .AddText("Você completou suas horas de trabalho.")
                 .Show();
@@ -37,6 +39,7 @@ public class WindowsNotifier : INotifier
         try
         {
             new ToastContentBuilder()
+                .AddArgument("action", "viewApp")
                 .AddText("Hora extra em andamento")
                 .AddText($"Já são {elapsed:hh\\:mm\\:ss} de hora extra.")
                 .Show();

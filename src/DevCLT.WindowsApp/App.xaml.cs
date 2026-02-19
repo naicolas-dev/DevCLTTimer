@@ -5,6 +5,7 @@ using DevCLT.Core.Interfaces;
 using DevCLT.Infrastructure.Data;
 using DevCLT.WindowsApp.Services;
 using DevCLT.WindowsApp.ViewModels;
+using Microsoft.Toolkit.Uwp.Notifications;
 
 namespace DevCLT.WindowsApp;
 
@@ -44,6 +45,27 @@ public partial class App : Application
             var window = new MainWindow();
             window.Initialize(mainVM);
             window.Show();
+
+            // Handle Notification Clicks
+            ToastNotificationManagerCompat.OnActivated += toastArgs =>
+            {
+                // Runs on a background thread
+                Application.Current.Dispatcher.Invoke(delegate
+                {
+                    var win = Application.Current.MainWindow;
+                    if (win != null)
+                    {
+                        if (win.WindowState == WindowState.Minimized)
+                            win.WindowState = WindowState.Normal;
+
+                        win.Show();
+                        win.Activate();
+                        win.Topmost = true;  // Hack to bring to front
+                        win.Topmost = false;
+                        win.Focus();
+                    }
+                });
+            };
         }
         catch (Exception ex)
         {
