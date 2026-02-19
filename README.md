@@ -55,14 +55,14 @@ src/DevCLT.WindowsApp/bin/Release/net8.0-windows10.0.17763.0/win-x64/publish/Dev
 - ✅ Close → minimize to tray com jornada ativa
 - ✅ Design system: Light theme (Argila/Sálvia), tokens, componentes WPF
 - ✅ TimerRing circular (2px) com warning color
-- ✅ Title bar nativa do Windows
 
 ## V2 (futuro)
 
 - [x] Dark theme (Floresta Noturna)
+- [x] Title Bar Personalizada
+- [x] Satoshi font embarcada
+- [ ] Painel anual
 - [ ] Hotkeys
 - [ ] Export CSV
-- [ ] Painel anual
 - [ ] Port para Linux (Avalonia)
 - [ ] Tray tooltip com tempo restante
-- [ ] Satoshi font embarcada
