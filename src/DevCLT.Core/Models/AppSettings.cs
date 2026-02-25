@@ -6,6 +6,7 @@ public class AppSettings
     public int BreakDurationMinutes { get; set; } = 60;  // 1h
     public int OvertimeNotifyIntervalMinutes { get; set; } = 30; // 0 = never
     public bool IsDarkTheme { get; set; }
+    public bool HasCompletedOnboarding { get; set; }
 
     // Hotkeys
     public bool HotkeysEnabled { get; set; } = true;

@@ -94,6 +94,7 @@ public class SettingsViewModel : ViewModelBase
     public ICommand RecordJornadaCommand { get; }
     public ICommand RecordPausaCommand { get; }
     public ICommand RecordOvertimeCommand { get; }
+    public ICommand ShowOnboardingCommand { get; }
 
     // Unsaved-changes modal commands
     public ICommand UnsavedDiscardCommand { get; }
@@ -101,6 +102,7 @@ public class SettingsViewModel : ViewModelBase
     public ICommand UnsavedContinueCommand { get; }
 
     public event Action? BackRequested;
+    public event Action? ShowOnboardingRequested;
 
     public SettingsViewModel(IRepository repository, HotkeyService hotkeyService)
     {
@@ -118,6 +120,7 @@ public class SettingsViewModel : ViewModelBase
         RecordJornadaCommand = new RelayCommand(() => StartRecording(nameof(JornadaKey)));
         RecordPausaCommand = new RelayCommand(() => StartRecording(nameof(PausaKey)));
         RecordOvertimeCommand = new RelayCommand(() => StartRecording(nameof(OvertimeKey)));
+        ShowOnboardingCommand = new RelayCommand(() => ShowOnboardingRequested?.Invoke());
 
         UnsavedDiscardCommand = new RelayCommand(DiscardAndLeave);
         UnsavedSaveCommand = new AsyncRelayCommand(SaveAndLeave);

@@ -168,6 +168,7 @@ public class SqliteRepository : IRepository
         await UpsertSetting(conn, "BreakDurationMinutes", settings.BreakDurationMinutes.ToString());
         await UpsertSetting(conn, "OvertimeNotifyIntervalMinutes", settings.OvertimeNotifyIntervalMinutes.ToString());
         await UpsertSetting(conn, "IsDarkTheme", settings.IsDarkTheme.ToString());
+        await UpsertSetting(conn, "HasCompletedOnboarding", settings.HasCompletedOnboarding.ToString());
         await UpsertSetting(conn, "HotkeysEnabled", settings.HotkeysEnabled.ToString());
         await UpsertSetting(conn, "HotkeyJornada", settings.HotkeyJornada);
         await UpsertSetting(conn, "HotkeyPausa", settings.HotkeyPausa);
@@ -196,6 +197,8 @@ public class SqliteRepository : IRepository
             settings.OvertimeNotifyIntervalMinutes = ov;
         if (dict.TryGetValue("IsDarkTheme", out var d) && bool.TryParse(d, out var dv))
             settings.IsDarkTheme = dv;
+        if (dict.TryGetValue("HasCompletedOnboarding", out var onboarding) && bool.TryParse(onboarding, out var onboardingValue))
+            settings.HasCompletedOnboarding = onboardingValue;
         if (dict.TryGetValue("HotkeysEnabled", out var he) && bool.TryParse(he, out var hev))
             settings.HotkeysEnabled = hev;
         if (dict.TryGetValue("HotkeyJornada", out var hj))

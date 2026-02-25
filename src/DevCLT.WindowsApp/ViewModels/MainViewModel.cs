@@ -17,11 +17,13 @@ public class MainViewModel : ViewModelBase
     private ViewModelBase? _currentView;
     private bool _showRecoveryCard;
     private Session? _recoverySession;
+    private OnboardingOrigin _onboardingOrigin = OnboardingOrigin.FirstLaunch;
 
     public ViewModelBase? CurrentView { get => _currentView; set => SetField(ref _currentView, value); }
     public bool ShowRecoveryCard { get => _showRecoveryCard; set => SetField(ref _showRecoveryCard, value); }
 
     public SetupViewModel SetupVM { get; }
+    public OnboardingViewModel OnboardingVM { get; }
     public TimerViewModel TimerVM { get; }
     public HistoryViewModel HistoryVM { get; }
     public SettingsViewModel SettingsVM { get; }
@@ -45,14 +47,17 @@ public class MainViewModel : ViewModelBase
         _themeService = themeService;
 
         SetupVM = new SetupViewModel(repository, themeService);
+        OnboardingVM = new OnboardingViewModel();
         TimerVM = new TimerViewModel(engine, repository, notifier, clock);
         HistoryVM = new HistoryViewModel(repository, clock, csvExport);
         SettingsVM = new SettingsViewModel(repository, hotkeyService);
 
         SetupVM.StartRequested += OnStartRequested;
+        OnboardingVM.Finished += OnOnboardingFinished;
         TimerVM.SessionEnded += OnSessionEnded;
         HistoryVM.BackRequested += () => ShowSetup();
         SettingsVM.BackRequested += () => ShowSetup();
+        SettingsVM.ShowOnboardingRequested += OnShowOnboardingRequested;
 
         ResumeRecoveryCommand = new RelayCommand(async () => await ResumeRecovery());
         DiscardRecoveryCommand = new RelayCommand(async () => await DiscardRecovery());
@@ -73,6 +78,10 @@ public class MainViewModel : ViewModelBase
     public async Task InitializeAsync()
     {
         await SetupVM.LoadSettings();
+        var settings = await _repository.LoadSettingsAsync();
+
+        if (!settings.HasCompletedOnboarding)
+            OpenOnboarding(OnboardingOrigin.FirstLaunch);
 
         // Check for unfinished session (recovery)
         _recoverySession = await _repository.GetActiveSessionAsync();
@@ -108,6 +117,32 @@ public class MainViewModel : ViewModelBase
     {
         CurrentView = SettingsVM;
         await SettingsVM.LoadSettings();
+    }
+
+    private void OnShowOnboardingRequested()
+    {
+        OpenOnboarding(OnboardingOrigin.FromSettings);
+    }
+
+    private async void OnOnboardingFinished()
+    {
+        var settings = await _repository.LoadSettingsAsync();
+        if (!settings.HasCompletedOnboarding)
+        {
+            settings.HasCompletedOnboarding = true;
+            await _repository.SaveSettingsAsync(settings);
+        }
+
+        CurrentView = _onboardingOrigin == OnboardingOrigin.FromSettings
+            ? SettingsVM
+            : SetupVM;
+    }
+
+    private void OpenOnboarding(OnboardingOrigin origin)
+    {
+        _onboardingOrigin = origin;
+        OnboardingVM.Reset();
+        CurrentView = OnboardingVM;
     }
 
     private async Task ResumeRecovery()
@@ -158,5 +193,11 @@ public class MainViewModel : ViewModelBase
             await _repository.UpdateSessionAsync(_recoverySession);
             _recoverySession = null;
         }
+    }
+
+    private enum OnboardingOrigin
+    {
+        FirstLaunch,
+        FromSettings
     }
 }

@@ -79,13 +79,12 @@ public class SetupViewModel : ViewModelBase
 
     private async void OnStart()
     {
-        await _repository.SaveSettingsAsync(new AppSettings
-        {
-            WorkDurationMinutes = TotalWorkMinutes,
-            BreakDurationMinutes = TotalBreakMinutes,
-            OvertimeNotifyIntervalMinutes = OvertimeNotifyMinutes,
-            IsDarkTheme = IsDarkTheme
-        });
+        var settings = await _repository.LoadSettingsAsync();
+        settings.WorkDurationMinutes = TotalWorkMinutes;
+        settings.BreakDurationMinutes = TotalBreakMinutes;
+        settings.OvertimeNotifyIntervalMinutes = OvertimeNotifyMinutes;
+        settings.IsDarkTheme = IsDarkTheme;
+        await _repository.SaveSettingsAsync(settings);
         StartRequested?.Invoke(TotalWorkMinutes, TotalBreakMinutes, OvertimeNotifyMinutes);
     }
 }
